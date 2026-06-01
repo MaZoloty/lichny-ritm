@@ -122,6 +122,48 @@ npm run dev      # запуск
 
 ---
 
+## Deploy to Vercel
+
+Перед деплоем код должен быть в GitHub-репозитории, а `supabase/schema.sql` уже должен быть применён в Supabase SQL Editor.
+
+1. В Vercel создай новый проект из GitHub-репозитория.
+2. Framework Preset: **Next.js**.
+3. Build Command: `npm run build`.
+4. Install Command: `npm install`.
+5. Output Directory оставь пустым / default.
+
+В **Vercel → Project Settings → Environment Variables** добавь:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-publishable-or-anon-public-key
+```
+
+Эти значения должны совпадать с Supabase Project URL и publishable/anon public key. Не добавляй в клиентский проект `service_role`, database password, JWT secret или SMTP secrets.
+
+После первого деплоя скопируй production URL из Vercel, например:
+
+```text
+https://your-project.vercel.app
+```
+
+Затем в Supabase открой **Authentication → URL Configuration** и добавь:
+
+- **Site URL**: production URL из Vercel.
+- **Redirect URLs**:
+  - `https://your-project.vercel.app`
+  - `https://your-project.vercel.app/**`
+
+Если используешь preview-деплои Vercel, добавь также preview redirect pattern, например:
+
+```text
+https://*.vercel.app/**
+```
+
+Для production-сборки не нужен `.env.local` в репозитории: локальный файл игнорируется Git, а Vercel читает значения из Environment Variables.
+
+---
+
 ## Структура проекта
 
 ```
