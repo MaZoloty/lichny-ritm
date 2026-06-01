@@ -116,7 +116,7 @@ export default function OnboardingPage() {
         <div className="flex flex-1 flex-col">
           <h1 className="text-2xl font-semibold">Что отслеживаем?</h1>
           <p className="mt-2 text-muted">
-            Можно выбрать только одно. Остальное добавишь в настройках.
+            Можно выбрать один или несколько разделов. Остальное добавишь в настройках.
           </p>
           <div className="mt-6 flex flex-col gap-3">
             {MODULES.map((m) => {
