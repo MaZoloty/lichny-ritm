@@ -27,6 +27,17 @@ do $$ begin
   end if;
 end $$;
 
+-- Тип операции 'debt_payment' (платеж по долгу) не входит в обычную аналитику расходов.
+do $$ begin
+  if not exists (
+    select 1 from pg_enum e
+    join pg_type t on t.oid = e.enumtypid
+    where t.typname = 'category_type' and e.enumlabel = 'debt_payment'
+  ) then
+    alter type category_type add value 'debt_payment';
+  end if;
+end $$;
+
 do $$ begin
   create type debt_type as enum ('credit_card', 'loan', 'installment', 'other');
 exception when duplicate_object then null; end $$;
@@ -150,6 +161,23 @@ create table if not exists public.debts (
   updated_at        timestamptz not null default now()
 );
 
+alter table public.debts add column if not exists comment text;
+do $$ begin
+  alter table public.debts add constraint debts_initial_positive
+    check (initial_amount > 0) not valid;
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.debts add constraint debts_current_nonneg
+    check (current_amount >= 0) not valid;
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.debts add constraint debts_minimum_nonneg
+    check (minimum_payment >= 0) not valid;
+exception when duplicate_object then null; end $$;
+
+create index if not exists debts_user_active_idx
+  on public.debts (user_id, is_active);
+
 -- =====================================================================
 --  savings (сбережения / подушка)
 -- =====================================================================
@@ -184,6 +212,33 @@ create table if not exists public.transactions (
 
 create index if not exists transactions_user_date_idx
   on public.transactions (user_id, date);
+
+-- =====================================================================
+--  debt_payments (фактические платежи по долгам)
+-- =====================================================================
+create table if not exists public.debt_payments (
+  id                  uuid primary key default gen_random_uuid(),
+  user_id             uuid not null references auth.users(id) on delete cascade,
+  debt_id             uuid not null references public.debts(id) on delete cascade,
+  account_id          uuid references public.accounts(id) on delete set null,
+  transaction_id      uuid references public.transactions(id) on delete set null,
+  actual_payment      numeric(14,2) not null check (actual_payment > 0),
+  principal_reduction numeric(14,2) not null check (principal_reduction >= 0),
+  interest_amount     numeric(14,2) not null check (interest_amount >= 0),
+  payment_date        date not null default current_date,
+  comment             text,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now(),
+  check (principal_reduction <= actual_payment),
+  check (interest_amount <= actual_payment),
+  check (interest_amount = actual_payment - principal_reduction)
+);
+
+create index if not exists debt_payments_user_debt_idx
+  on public.debt_payments (user_id, debt_id, payment_date desc);
+
+create index if not exists debt_payments_transaction_idx
+  on public.debt_payments (transaction_id);
 
 -- =====================================================================
 --  goal_contributions (пополнения целей)
@@ -245,7 +300,7 @@ begin
   foreach t in array array[
     'profiles','user_modules','accounts','habits',
     'categories','goals','debts','savings','transactions',
-    'goal_contributions','habit_weekly_goals','habit_logs'
+    'debt_payments','goal_contributions','habit_weekly_goals','habit_logs'
   ] loop
     execute format('drop trigger if exists set_updated_at on public.%I', t);
     execute format(
@@ -263,7 +318,7 @@ begin
   foreach t in array array[
     'profiles','user_modules','accounts','habits',
     'categories','goals','debts','savings','transactions',
-    'goal_contributions','habit_weekly_goals','habit_logs'
+    'debt_payments','goal_contributions','habit_weekly_goals','habit_logs'
   ] loop
     execute format('alter table public.%I enable row level security', t);
 

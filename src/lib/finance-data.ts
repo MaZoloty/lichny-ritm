@@ -94,7 +94,7 @@ export async function loadFinance(period: Period): Promise<FinanceData> {
         .select(
           "id, amount, type, date, comment, category_id, account_id, categories(name), accounts(name, current_balance, currency)",
         )
-        .neq("type", "saving") // пополнения целей не входят в обычную аналитику
+        .in("type", ["income", "expense"]) // saving и debt_payment не входят в обычную аналитику
         .gte("date", fromISO)
         .lte("date", toISO)
         .order("date", { ascending: false })

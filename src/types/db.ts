@@ -37,7 +37,7 @@ export interface Category {
   is_active: boolean;
 }
 
-export type TransactionType = "income" | "expense" | "saving";
+export type TransactionType = "income" | "expense" | "saving" | "debt_payment";
 
 export interface Transaction {
   id: string;
@@ -96,7 +96,23 @@ export interface Debt {
   minimum_payment: number;
   payment_day: number | null;
   next_payment_date: string | null;
+  comment: string | null;
   is_active: boolean;
+}
+
+export interface DebtPayment {
+  id: string;
+  user_id: string;
+  debt_id: string;
+  account_id: string | null;
+  transaction_id: string | null;
+  actual_payment: number;
+  principal_reduction: number;
+  interest_amount: number;
+  payment_date: string;
+  comment: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Saving {

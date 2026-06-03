@@ -6,10 +6,11 @@ import { money, signedMoney } from "@/lib/format";
 import { loadHabitsWeek } from "@/lib/habits-data";
 import { loadFinance } from "@/lib/finance-data";
 import { loadGoals } from "@/lib/goals-data";
+import { loadDebts } from "@/lib/debts-data";
 import { completedInWeek, overallProgress, percentOf } from "@/lib/habits";
 import { goalPercent } from "@/lib/goals";
 import LocalGreeting from "@/components/LocalGreeting";
-import type { Debt, Saving } from "@/types/db";
+import type { Saving } from "@/types/db";
 
 export default async function HomePage() {
   const ctx = await getUserContext();
@@ -20,13 +21,11 @@ export default async function HomePage() {
   const name = ctx.profile?.display_name?.trim();
 
   // Грузим только то, что нужно для включённых модулей.
-  const [week, finance, goalsData, debtsRes, savingsRes] = await Promise.all([
+  const [week, finance, goalsData, debtsData, savingsRes] = await Promise.all([
     enabled.has("habits") ? loadHabitsWeek() : Promise.resolve(null),
     enabled.has("finance") ? loadFinance("today") : Promise.resolve(null),
     enabled.has("goals") ? loadGoals() : Promise.resolve(null),
-    enabled.has("debts")
-      ? supabase.from("debts").select("*").eq("is_active", true)
-      : Promise.resolve({ data: [] as Debt[] }),
+    enabled.has("debts") ? loadDebts() : Promise.resolve(null),
     enabled.has("savings")
       ? supabase.from("savings").select("*").eq("is_active", true)
       : Promise.resolve({ data: [] as Saving[] }),
@@ -51,15 +50,10 @@ export default async function HomePage() {
     : null;
 
   const topGoals = goalsData?.goals.slice(0, 2) ?? [];
-  const debts = (debtsRes.data ?? []) as Debt[];
   const savings = (savingsRes.data ?? []) as Saving[];
 
-  const totalDebt = debts.reduce((s, d) => s + Number(d.current_amount), 0);
-  const nextDebt = debts
-    .filter((d) => d.next_payment_date)
-    .sort((a, b) =>
-      (a.next_payment_date ?? "").localeCompare(b.next_payment_date ?? ""),
-    )[0];
+  const totalDebt = debtsData?.summary.totalCurrentDebt ?? 0;
+  const nextDebt = debtsData?.summary.nextPayment ?? null;
   const totalSavings = savings.reduce(
     (s, v) => s + Number(v.current_amount),
     0,
@@ -263,6 +257,24 @@ export default async function HomePage() {
             <div className="mb-1 text-2xl font-semibold">
               {money(totalDebt)}
             </div>
+            <div className="mb-3 text-xs text-muted">Осталось закрыть</div>
+            {debtsData && (
+              <>
+                <div className="mb-1 flex justify-between text-sm">
+                  <span className="text-muted">Прогресс закрытия</span>
+                  <span className="font-medium">
+                    {debtsData.summary.overallPaidPercent}%
+                  </span>
+                </div>
+                <Progress value={debtsData.summary.overallPaidPercent} />
+                <div className="mt-3 rounded-[1.15rem] bg-bg/70 px-3 py-2 text-sm">
+                  Минимальные платежи:{" "}
+                  <span className="font-medium">
+                    {money(debtsData.summary.monthlyMinimumTotal)}
+                  </span>
+                </div>
+              </>
+            )}
             <p className="mb-4 text-sm text-muted">
               {nextDebt
                 ? `Ближайший платёж: ${money(
