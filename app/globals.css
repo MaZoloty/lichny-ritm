@@ -15,12 +15,23 @@ body {
     #faf7f2;
   color: #2f2f35;
   font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background: rgba(139, 92, 246, 0.18);
+}
+
+/* На десктопе контейнер выглядит как мобильное приложение в рамке. */
+@media (min-width: 480px) {
+  body {
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(139, 92, 246, 0.08), transparent 60%),
+      #f3eee7;
+  }
 }
 
 /* Safe-area для iPhone (нижнее меню над домашним индикатором) */
@@ -32,39 +43,132 @@ body {
 }
 
 @layer components {
+  /* ---------- App shell: мобильный контейнер ---------- */
   .app-shell {
     @apply mx-auto min-h-screen max-w-md overflow-x-hidden pb-32;
   }
+  @media (min-width: 480px) {
+    .app-shell {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 247, 242, 0) 32%),
+        #faf7f2;
+      box-shadow: 0 30px 90px -45px rgba(47, 47, 53, 0.3);
+      border-left: 1px solid rgba(255, 255, 255, 0.7);
+      border-right: 1px solid rgba(237, 231, 223, 0.9);
+    }
+  }
+
+  /* ---------- Карточки ---------- */
+  .app-card {
+    @apply rounded-[1.65rem] border border-line bg-white p-5 shadow-card;
+  }
+  /* .card — основной алиас, используется по всему приложению. */
   .card {
-    @apply rounded-[1.65rem] border border-white/80 bg-white/90 p-5 shadow-soft
-      backdrop-blur;
+    @apply rounded-[1.65rem] border border-line bg-white p-5 shadow-card;
   }
-  .btn-primary {
-    @apply inline-flex min-h-12 items-center justify-center rounded-[1.35rem]
-      bg-accent px-5 py-3 font-semibold text-white shadow-[0_12px_28px_-16px_rgba(139,92,246,0.85)]
-      transition hover:bg-accent/95 active:scale-[0.98] disabled:opacity-50;
+  .soft-card {
+    @apply rounded-[1.5rem] border border-line bg-milk p-4;
   }
-  .btn-ghost {
-    @apply inline-flex min-h-12 items-center justify-center rounded-[1.35rem]
-      border border-white/80 bg-white/75 px-5 py-3 font-semibold text-ink
-      shadow-[0_10px_24px_-20px_rgba(47,47,53,0.45)] transition
-      hover:bg-white active:scale-[0.98];
-  }
-  .field {
-    @apply w-full rounded-[1.25rem] border border-white/80 bg-white/75 px-4 py-3
-      text-ink outline-none placeholder:text-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]
-      transition focus:border-accent focus:bg-white focus:ring-4 focus:ring-accent/10;
-  }
-  .soft-tile {
-    @apply rounded-[1.35rem] border border-white/70 bg-bg/75 px-4 py-3;
+  .summary-card {
+    @apply rounded-[1.85rem] border border-line bg-white p-5 shadow-card;
   }
   .metric-card {
-    @apply rounded-[1.5rem] border border-white/80 bg-white/90 p-4 shadow-soft;
+    @apply rounded-[1.5rem] border border-line bg-white p-4 shadow-soft;
   }
+  .soft-tile {
+    @apply rounded-[1.35rem] border border-line/70 bg-bg/70 px-4 py-3;
+  }
+
+  /* ---------- Кнопки ---------- */
+  .btn-primary {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full
+      bg-accent px-5 py-3 font-semibold text-white shadow-accent-glow
+      transition hover:bg-accent/95 active:scale-[0.98] disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full
+      border border-accent/20 bg-accent-soft px-5 py-3 font-semibold text-accent
+      transition hover:bg-accent-soft/80 active:scale-[0.98] disabled:opacity-50;
+  }
+  .btn-soft {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full
+      border border-line bg-milk px-5 py-3 font-semibold text-ink
+      transition hover:bg-white active:scale-[0.98] disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full
+      border border-line bg-white/70 px-5 py-3 font-semibold text-ink
+      transition hover:bg-white active:scale-[0.98] disabled:opacity-50;
+  }
+  .btn-danger-soft {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full
+      border border-peach/25 bg-peach-soft px-5 py-3 font-semibold text-peach
+      transition hover:bg-peach-soft/80 active:scale-[0.98] disabled:opacity-50;
+  }
+
+  /* ---------- Поля ввода ---------- */
+  .input,
+  .select,
+  .textarea,
+  .field {
+    @apply w-full rounded-[1.25rem] border border-line bg-milk px-4 py-3
+      text-ink outline-none placeholder:text-faint transition
+      focus:border-accent focus:bg-white focus:ring-4 focus:ring-accent/10;
+  }
+  .textarea {
+    @apply min-h-24 resize-y leading-relaxed;
+  }
+  .select {
+    @apply appearance-none pr-10;
+  }
+
+  /* ---------- Бейджи / pills ---------- */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium;
+  }
+  .badge-primary {
+    @apply bg-accent-soft text-accent;
+  }
+  .badge-success {
+    @apply bg-green-soft text-ink;
+  }
+  .badge-warning {
+    @apply bg-peach-soft text-ink;
+  }
+  .badge-muted {
+    @apply bg-bg text-muted;
+  }
+
+  /* ---------- Прогресс-бары ---------- */
   .progress-track {
-    @apply h-2.5 w-full overflow-hidden rounded-full bg-line/80;
+    @apply h-2 w-full overflow-hidden rounded-full bg-line;
   }
   .progress-fill {
     @apply h-full rounded-full bg-accent transition-all;
+  }
+  .progress-fill-success {
+    @apply h-full rounded-full bg-green transition-all;
+  }
+  .progress-fill-warning {
+    @apply h-full rounded-full bg-peach transition-all;
+  }
+
+  /* ---------- Типографика ---------- */
+  .h1 {
+    @apply text-[1.7rem] font-bold leading-tight tracking-tight text-ink;
+  }
+  .h2 {
+    @apply text-lg font-semibold leading-snug text-ink;
+  }
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-wide text-faint;
+  }
+  /* Крупные summary-цифры с табличными цифрами для ровного выравнивания. */
+  .stat {
+    @apply text-3xl font-bold leading-none tracking-tight text-ink;
+    font-variant-numeric: tabular-nums;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
   }
 }

@@ -7,6 +7,7 @@ import {
   CalendarCheck,
   Landmark,
   PiggyBank,
+  Sparkles,
   Target,
   Wallet,
   type LucideIcon,
@@ -51,37 +52,46 @@ export default function TodayReminders() {
   if (cards === null) return null;
 
   return (
-    <section className="mb-5">
-      <h2 className="mb-2 px-1 text-lg font-medium text-ink">Сегодня важно</h2>
+    <section className="mb-6">
+      <h2 className="eyebrow mb-2 px-1">Сегодня важно</h2>
+
       {cards.length === 0 ? (
-        <div className="card">
-          <p className="text-sm text-muted">На сегодня всё спокойно.</p>
+        <div className="summary-card flex items-center gap-3">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-green-soft text-ink">
+            <Sparkles size={22} strokeWidth={1.9} />
+          </span>
+          <div>
+            <div className="font-semibold text-ink">На сегодня всё спокойно</div>
+            <div className="text-sm text-muted">
+              Можно просто прожить день в своём ритме.
+            </div>
+          </div>
         </div>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {cards.map((card) => {
             const Icon = ICONS[card.type] ?? Bell;
             return (
               <li key={card.key}>
-                <Link
-                  href={card.href}
-                  className="card flex items-center gap-3 active:scale-[0.99]"
-                >
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent">
-                    <Icon size={20} strokeWidth={1.9} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-medium text-ink">
-                      {card.title}
+                <div className="summary-card">
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-accent">
+                      <Icon size={22} strokeWidth={1.9} />
                     </span>
-                    <span className="block text-sm text-muted">
-                      {card.text}
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-sm font-medium text-accent">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-ink">{card.title}</div>
+                      <div className="mt-0.5 text-sm leading-snug text-muted">
+                        {card.text}
+                      </div>
+                    </div>
+                  </div>
+                  <Link
+                    href={card.href}
+                    className="btn-secondary mt-3 w-full"
+                  >
                     {card.actionLabel}
-                  </span>
-                </Link>
+                  </Link>
+                </div>
               </li>
             );
           })}

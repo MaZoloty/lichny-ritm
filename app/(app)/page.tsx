@@ -1,5 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  CalendarCheck,
+  Landmark,
+  PiggyBank,
+  Plus,
+  Target,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { getUserContext } from "@/lib/data";
 import { money, signedMoney } from "@/lib/format";
 import { loadHabitsWeek } from "@/lib/habits-data";
@@ -41,62 +50,73 @@ export default async function HomePage() {
             items.map((i) => ({ completed: i.done, goal: i.goal })),
           ),
           count: items.length,
-          top: items.slice(0, 3),
         };
       })()
     : null;
 
-  const topGoals = goalsData?.goals.slice(0, 2) ?? [];
+  const topGoal = goalsData?.goals[0] ?? null;
+  const topGoalPct = topGoal
+    ? goalPercent(Number(topGoal.current_amount), Number(topGoal.target_amount))
+    : 0;
   const totalDebt = debtsData?.summary.totalCurrentDebt ?? 0;
   const nextDebt = debtsData?.summary.nextPayment ?? null;
   const totalSavings = savingsData?.totalSavings ?? 0;
+  const totalBalance = (finance?.byAccount ?? []).reduce(
+    (sum, account) => sum + (account.currentBalance ?? 0),
+    0,
+  );
 
   const empty = enabled.size === 0;
 
   return (
     <main className="px-5 pt-safe">
-      <header className="mb-5 mt-4">
-        <p className="text-sm font-medium text-muted">
-          <LocalGreeting name={name} />
-        </p>
-        <h1 className="mt-1 text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
+      {/* ---------- Hero ---------- */}
+      <header className="mb-6 mt-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-medium text-muted">
+            <LocalGreeting name={name} />
+          </p>
+          <span className="badge badge-primary">Мягкий режим</span>
+        </div>
+        <h1 className="mt-2 text-[2rem] font-bold leading-[1.1] tracking-tight text-ink">
           Твой ритм сегодня
         </h1>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          Соберём день спокойно: финансы, привычки и цели в одном месте.
+        </p>
       </header>
 
+      {/* ---------- Сегодня важно ---------- */}
+      {enabled.has("reminders") && <TodayReminders />}
+
+      {/* ---------- Быстрые действия ---------- */}
       {!empty && (
-        <section className="mb-5 grid grid-cols-2 gap-2">
-          {enabled.has("finance") && (
-            <>
-              <Link href="/finance" className="soft-tile flex min-h-20 flex-col justify-between">
-                <span className="text-xs font-medium text-muted">Быстро</span>
-                <span className="text-base font-semibold text-ink">+ Доход</span>
-              </Link>
-              <Link href="/finance" className="soft-tile flex min-h-20 flex-col justify-between">
-                <span className="text-xs font-medium text-muted">Быстро</span>
-                <span className="text-base font-semibold text-ink">+ Расход</span>
-              </Link>
-            </>
-          )}
-          {enabled.has("goals") && (
-            <Link href="/goals" className="soft-tile flex min-h-20 flex-col justify-between">
-              <span className="text-xs font-medium text-muted">Цели</span>
-              <span className="text-base font-semibold text-ink">Пополнить цель</span>
-            </Link>
-          )}
-          {enabled.has("habits") && (
-            <Link href="/habits" className="soft-tile flex min-h-20 flex-col justify-between">
-              <span className="text-xs font-medium text-muted">Привычки</span>
-              <span className="text-base font-semibold text-ink">Отметить</span>
-            </Link>
-          )}
+        <section className="mb-6">
+          <h2 className="eyebrow mb-2 px-1">Быстрые действия</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {enabled.has("finance") && (
+              <>
+                <QuickAction href="/finance" icon={Plus} label="Доход" />
+                <QuickAction href="/finance" icon={Plus} label="Расход" />
+              </>
+            )}
+            {enabled.has("habits") && (
+              <QuickAction
+                href="/habits"
+                icon={CalendarCheck}
+                label="Отметить"
+              />
+            )}
+            {enabled.has("goals") && (
+              <QuickAction href="/goals" icon={Target} label="Пополнить цель" />
+            )}
+          </div>
         </section>
       )}
 
-      {enabled.has("reminders") && <TodayReminders />}
-
+      {/* ---------- Пустое состояние ---------- */}
       {empty && (
-        <div className="card text-center">
+        <div className="summary-card text-center">
           <p className="text-muted">
             Пока не выбрано ни одного раздела. Включи нужное в настройках.
           </p>
@@ -106,225 +126,258 @@ export default async function HomePage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        {/* Привычки */}
-        {enabled.has("habits") && (
-          <section className="card">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-medium">Привычки недели</h2>
-              {habitSummary && habitSummary.overall !== null && (
-                <span className="text-sm font-medium text-accent">
-                  {habitSummary.overall}%
-                </span>
-              )}
-            </div>
-            {!habitSummary || habitSummary.count === 0 ? (
-              <p className="mb-4 text-sm text-muted">
-                Пока просто отмечаем факты. Цели можно поставить в понедельник.
-              </p>
-            ) : (
-              <>
-                {habitSummary.overall === null && (
-                  <p className="mb-3 text-sm text-muted">
-                    Пока просто отмечаем факты.
-                  </p>
-                )}
-                <ul className="mb-4 flex flex-col gap-2">
-                  {habitSummary.top.map((h) => (
-                    <li
-                      key={h.name}
-                      className="soft-tile flex items-center justify-between"
-                    >
-                      <span>{h.name}</span>
-                      <span className="text-sm text-muted">
-                        {h.goal && h.goal > 0
-                          ? `${h.done}/${h.goal}${
-                              h.pct !== null ? ` · ${h.pct}%` : ""
-                            }`
-                          : `${h.done} раз`}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </>
+      {/* ---------- Карточки модулей ---------- */}
+      {!empty && (
+        <section>
+          <h2 className="eyebrow mb-2 px-1">Разделы</h2>
+          <div className="flex flex-col gap-3">
+            {/* Привычки */}
+            {enabled.has("habits") && (
+              <ModuleCard
+                href="/habits"
+                icon={CalendarCheck}
+                label="Привычки"
+                metric={
+                  !habitSummary || habitSummary.count === 0
+                    ? "Мягкий старт"
+                    : habitSummary.overall === null
+                      ? "Без целей"
+                      : `${habitSummary.overall}% недели`
+                }
+                meaning={
+                  !habitSummary || habitSummary.count === 0
+                    ? "Добавь первую привычку"
+                    : habitSummary.overall === null
+                      ? "Пока просто отмечаем факты"
+                      : "Ты уже движешься"
+                }
+                progress={
+                  habitSummary && habitSummary.overall !== null
+                    ? { value: Math.min(100, habitSummary.overall), tone: "success" }
+                    : undefined
+                }
+              />
             )}
-            <Link href="/habits" className="btn-primary w-full">
-              Открыть привычки
-            </Link>
-          </section>
-        )}
 
-        {/* Финансы */}
-        {enabled.has("finance") && (
-          <section className="card">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-medium">Финансы</h2>
-              <Link href="/finance" className="text-sm text-accent">
-                Подробнее
-              </Link>
-            </div>
-            <div className="mb-4 grid grid-cols-3 gap-2">
-              <div className="soft-tile px-3 py-3">
-                <div className="text-xs text-muted">Расходы</div>
-                <div className="mt-1 font-bold">
-                  {money(finance?.expenseTotal ?? 0, finance?.currency)}
+            {/* Финансы */}
+            {enabled.has("finance") && (
+              <ModuleCard
+                href="/finance"
+                icon={Wallet}
+                label="Финансы"
+                metric={money(totalBalance, finance?.currency)}
+                meaning="Баланс по счетам"
+              >
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  <MiniStat
+                    label="Доходы"
+                    value={money(finance?.incomeTotal ?? 0, finance?.currency)}
+                  />
+                  <MiniStat
+                    label="Расходы"
+                    value={money(finance?.expenseTotal ?? 0, finance?.currency)}
+                    tone="peach"
+                  />
+                  <MiniStat
+                    label="Разница"
+                    value={signedMoney(finance?.diff ?? 0, finance?.currency)}
+                    tone={(finance?.diff ?? 0) < 0 ? "peach" : "ink"}
+                  />
                 </div>
-              </div>
-              <div className="soft-tile px-3 py-3">
-                <div className="text-xs text-muted">Доходы</div>
-                <div className="mt-1 font-bold">
-                  {money(finance?.incomeTotal ?? 0, finance?.currency)}
-                </div>
-              </div>
-              <div className="soft-tile px-3 py-3">
-                <div className="text-xs text-muted">Разница</div>
-                <div
-                  className={`mt-1 font-bold ${
-                    (finance?.diff ?? 0) < 0 ? "text-peach" : "text-ink"
-                  }`}
-                >
-                  {signedMoney(finance?.diff ?? 0, finance?.currency)}
-                </div>
-              </div>
-            </div>
-            {!finance || finance.transactions.length === 0 ? (
-              <p className="mb-4 text-sm text-muted">
-                Сегодня пока пусто. Можно заполнить вечером.
-              </p>
-            ) : null}
-            <Link href="/finance" className="btn-primary w-full">
-              Открыть финансы
-            </Link>
-          </section>
-        )}
-
-        {/* Цели */}
-        {enabled.has("goals") && (
-          <section className="card">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-medium">Цели</h2>
-              {goalsData && goalsData.activeCount > 0 && (
-                <span className="text-sm text-muted">
-                  накоплено {money(goalsData.totalSaved, goalsData.currency)}
-                </span>
-              )}
-            </div>
-            {topGoals.length === 0 ? (
-              <p className="mb-4 text-sm text-muted">
-                Можно добавить первую цель, когда захочется копить на что-то
-                конкретное.
-              </p>
-            ) : (
-              <ul className="mb-4 flex flex-col gap-3">
-                {topGoals.map((g) => {
-                  const pct = goalPercent(
-                    Number(g.current_amount),
-                    Number(g.target_amount),
-                  );
-                  return (
-                    <li key={g.id}>
-                      <div className="mb-1 flex justify-between text-sm">
-                        <span>{g.name}</span>
-                        <span className="text-muted">{pct}%</span>
-                      </div>
-                      <Progress value={Math.min(100, pct)} />
-                    </li>
-                  );
-                })}
-              </ul>
+              </ModuleCard>
             )}
-            <Link href="/goals" className="btn-primary w-full">
-              {topGoals.length === 0 ? "Открыть цели" : "Пополнить"}
-            </Link>
-          </section>
-        )}
 
-        {/* Долги */}
-        {enabled.has("debts") && (
-          <section className="card">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-medium">Долги</h2>
-              <Link href="/debts" className="text-sm text-accent">
-                Все
-              </Link>
-            </div>
-            <div className="mb-1 text-2xl font-semibold">
-              {money(totalDebt)}
-            </div>
-            <div className="mb-3 text-xs text-muted">Осталось закрыть</div>
-            {debtsData && (
-              <>
-                <div className="mb-1 flex justify-between text-sm">
-                  <span className="text-muted">Прогресс закрытия</span>
-                  <span className="font-medium">
-                    {debtsData.summary.overallPaidPercent}%
-                  </span>
-                </div>
-                <Progress value={debtsData.summary.overallPaidPercent} />
-                <div className="mt-3 rounded-[1.15rem] bg-bg/70 px-3 py-2 text-sm">
-                  Минимальные платежи:{" "}
-                  <span className="font-medium">
-                    {money(debtsData.summary.monthlyMinimumTotal)}
-                  </span>
-                </div>
-              </>
+            {/* Цели */}
+            {enabled.has("goals") && (
+              <ModuleCard
+                href="/goals"
+                icon={Target}
+                label="Цели"
+                metric={money(goalsData?.totalSaved ?? 0, goalsData?.currency)}
+                meaning={
+                  topGoal ? `Ближайшая: ${topGoal.name}` : "Добавь первую цель"
+                }
+                progress={
+                  topGoal ? { value: Math.min(100, topGoalPct), tone: "accent" } : undefined
+                }
+              />
             )}
-            <p className="mb-4 text-sm text-muted">
-              {nextDebt
-                ? `Ближайший платёж: ${money(
-                    Number(nextDebt.minimum_payment),
-                  )} · ${nextDebt.next_payment_date}`
-                : "Сроки платежей пока не заданы."}
-            </p>
-            <Link href="/debts" className="btn-ghost w-full">
-              Внести платёж
-            </Link>
-          </section>
-        )}
 
-        {/* Сбережения */}
-        {enabled.has("savings") && (
-          <section className="card">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-medium">Сбережения</h2>
-              <Link href="/savings" className="text-sm text-accent">
-                Подробнее
-              </Link>
-            </div>
-            <div className="mb-1 text-2xl font-semibold">
-              {money(totalSavings)}
-            </div>
-            <p className="mb-4 text-sm text-muted">
-              Спокойная подушка на всякий случай.
-            </p>
-            {savingsData && savingsData.emergencyTargetAmount > 0 && (
-              <div className="mb-4">
-                <div className="mb-1 flex justify-between text-sm">
-                  <span className="text-muted">Подушка</span>
-                  <span className="font-medium">
-                    {savingsData.emergencyProgress}%
-                  </span>
-                </div>
-                <Progress value={savingsData.emergencyProgress} />
-              </div>
+            {/* Долги */}
+            {enabled.has("debts") && (
+              <ModuleCard
+                href="/debts"
+                icon={Landmark}
+                label="Долги"
+                metric={money(totalDebt)}
+                meaning={
+                  nextDebt
+                    ? `Платёж ${money(Number(nextDebt.minimum_payment))} · ${nextDebt.next_payment_date}`
+                    : "Осталось закрыть"
+                }
+                progress={
+                  debtsData
+                    ? {
+                        value: debtsData.summary.overallPaidPercent,
+                        tone: "success",
+                        label: `Закрыто ${debtsData.summary.overallPaidPercent}%`,
+                      }
+                    : undefined
+                }
+              />
             )}
-            <Link href="/savings" className="btn-ghost w-full">
-              Добавить
-            </Link>
-          </section>
-        )}
-      </div>
+
+            {/* Сбережения */}
+            {enabled.has("savings") && (
+              <ModuleCard
+                href="/savings"
+                icon={PiggyBank}
+                label="Сбережения"
+                metric={money(totalSavings)}
+                meaning={
+                  savingsData && savingsData.emergencyTargetAmount > 0
+                    ? `Подушка ${savingsData.emergencyProgress}%`
+                    : "Спокойная подушка на всякий случай"
+                }
+                progress={
+                  savingsData && savingsData.emergencyTargetAmount > 0
+                    ? { value: savingsData.emergencyProgress, tone: "accent" }
+                    : undefined
+                }
+              />
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
 
-function Progress({ value }: { value: number }) {
+/* ---------- Вспомогательные компоненты главной ---------- */
+
+function QuickAction({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="soft-card flex items-center gap-3 transition active:scale-[0.99]"
+    >
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+        <Icon size={20} strokeWidth={2} />
+      </span>
+      <span className="text-sm font-semibold text-ink">{label}</span>
+    </Link>
+  );
+}
+
+type ProgressTone = "accent" | "success" | "warning";
+
+function ModuleCard({
+  href,
+  icon: Icon,
+  label,
+  metric,
+  meaning,
+  progress,
+  children,
+}: {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+  metric: string;
+  meaning: string;
+  progress?: { value: number; tone?: ProgressTone; label?: string };
+  children?: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="app-card block transition active:scale-[0.99]"
+    >
+      <div className="flex items-start gap-3">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-accent">
+          <Icon size={22} strokeWidth={1.9} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-medium text-muted">{label}</span>
+            <Chevron />
+          </div>
+          <div className="mt-0.5 text-2xl font-bold leading-tight text-ink num">
+            {metric}
+          </div>
+          <div className="mt-0.5 truncate text-sm text-muted">{meaning}</div>
+
+          {progress && (
+            <div className="mt-3">
+              {progress.label && (
+                <div className="mb-1 text-xs font-medium text-muted">
+                  {progress.label}
+                </div>
+              )}
+              <Progress value={progress.value} tone={progress.tone} />
+            </div>
+          )}
+
+          {children}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function MiniStat({
+  label,
+  value,
+  tone = "ink",
+}: {
+  label: string;
+  value: string;
+  tone?: "ink" | "peach";
+}) {
+  return (
+    <div className="soft-tile px-3 py-2.5">
+      <div className="text-[0.7rem] text-muted">{label}</div>
+      <div
+        className={`mt-0.5 text-sm font-bold num ${
+          tone === "peach" ? "text-peach" : "text-ink"
+        }`}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Progress({
+  value,
+  tone = "accent",
+}: {
+  value: number;
+  tone?: ProgressTone;
+}) {
+  const fill =
+    tone === "success"
+      ? "progress-fill-success"
+      : tone === "warning"
+        ? "progress-fill-warning"
+        : "progress-fill";
   return (
     <div className="progress-track">
-      <div
-        className="progress-fill"
-        style={{ width: `${value}%` }}
-      />
+      <div className={fill} style={{ width: `${Math.min(100, value)}%` }} />
     </div>
+  );
+}
+
+function Chevron() {
+  return (
+    <span className="mr-0.5 inline-block h-2.5 w-2.5 rotate-45 border-r-2 border-t-2 border-faint" />
   );
 }
