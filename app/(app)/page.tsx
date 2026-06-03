@@ -1,34 +1,30 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUserContext } from "@/lib/data";
-import { createClient } from "@/lib/supabase/server";
 import { money, signedMoney } from "@/lib/format";
 import { loadHabitsWeek } from "@/lib/habits-data";
 import { loadFinance } from "@/lib/finance-data";
 import { loadGoals } from "@/lib/goals-data";
 import { loadDebts } from "@/lib/debts-data";
+import { loadSavings } from "@/lib/savings-data";
 import { completedInWeek, overallProgress, percentOf } from "@/lib/habits";
 import { goalPercent } from "@/lib/goals";
 import LocalGreeting from "@/components/LocalGreeting";
-import type { Saving } from "@/types/db";
 
 export default async function HomePage() {
   const ctx = await getUserContext();
   if (!ctx) redirect("/login");
 
-  const supabase = await createClient();
   const enabled = ctx.enabledModules;
   const name = ctx.profile?.display_name?.trim();
 
   // Грузим только то, что нужно для включённых модулей.
-  const [week, finance, goalsData, debtsData, savingsRes] = await Promise.all([
+  const [week, finance, goalsData, debtsData, savingsData] = await Promise.all([
     enabled.has("habits") ? loadHabitsWeek() : Promise.resolve(null),
     enabled.has("finance") ? loadFinance("today") : Promise.resolve(null),
     enabled.has("goals") ? loadGoals() : Promise.resolve(null),
     enabled.has("debts") ? loadDebts() : Promise.resolve(null),
-    enabled.has("savings")
-      ? supabase.from("savings").select("*").eq("is_active", true)
-      : Promise.resolve({ data: [] as Saving[] }),
+    enabled.has("savings") ? loadSavings() : Promise.resolve(null),
   ]);
 
   // Сводка по привычкам недели для карточки на главной.
@@ -50,14 +46,9 @@ export default async function HomePage() {
     : null;
 
   const topGoals = goalsData?.goals.slice(0, 2) ?? [];
-  const savings = (savingsRes.data ?? []) as Saving[];
-
   const totalDebt = debtsData?.summary.totalCurrentDebt ?? 0;
   const nextDebt = debtsData?.summary.nextPayment ?? null;
-  const totalSavings = savings.reduce(
-    (s, v) => s + Number(v.current_amount),
-    0,
-  );
+  const totalSavings = savingsData?.totalSavings ?? 0;
 
   const empty = enabled.size === 0;
 
@@ -303,6 +294,17 @@ export default async function HomePage() {
             <p className="mb-4 text-sm text-muted">
               Спокойная подушка на всякий случай.
             </p>
+            {savingsData && savingsData.emergencyTargetAmount > 0 && (
+              <div className="mb-4">
+                <div className="mb-1 flex justify-between text-sm">
+                  <span className="text-muted">Подушка</span>
+                  <span className="font-medium">
+                    {savingsData.emergencyProgress}%
+                  </span>
+                </div>
+                <Progress value={savingsData.emergencyProgress} />
+              </div>
+            )}
             <Link href="/savings" className="btn-ghost w-full">
               Добавить
             </Link>

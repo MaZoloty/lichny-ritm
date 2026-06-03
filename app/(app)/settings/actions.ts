@@ -47,6 +47,7 @@ const RESET_TABLES: { table: string; optional?: boolean }[] = [
   { table: "debt_payments", optional: true },
   { table: "habits" },
   { table: "goals" },
+  { table: "savings_settings", optional: true },
   { table: "savings" },
   { table: "debts" },
   { table: "accounts" },

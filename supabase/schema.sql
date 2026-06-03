@@ -85,10 +85,13 @@ create table if not exists public.accounts (
   start_balance   numeric(14,2) not null default 0,
   current_balance numeric(14,2) not null default 0,
   currency        text not null default 'RUB',
+  is_savings      boolean not null default false,
   is_active       boolean not null default true,
   created_at      timestamptz not null default now(),
   updated_at      timestamptz not null default now()
 );
+
+alter table public.accounts add column if not exists is_savings boolean not null default false;
 
 -- =====================================================================
 --  habits (привычки)
@@ -192,6 +195,16 @@ create table if not exists public.savings (
   is_active      boolean not null default true,
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()
+);
+
+-- Настройки сбережений. Основная модель сбережений — accounts.is_savings,
+-- эта таблица хранит только цель подушки безопасности.
+create table if not exists public.savings_settings (
+  id                      uuid primary key default gen_random_uuid(),
+  user_id                 uuid not null unique references auth.users(id) on delete cascade,
+  emergency_target_amount numeric(14,2) not null default 0 check (emergency_target_amount >= 0),
+  created_at              timestamptz not null default now(),
+  updated_at              timestamptz not null default now()
 );
 
 -- =====================================================================
@@ -299,7 +312,7 @@ declare t text;
 begin
   foreach t in array array[
     'profiles','user_modules','accounts','habits',
-    'categories','goals','debts','savings','transactions',
+    'categories','goals','debts','savings','savings_settings','transactions',
     'debt_payments','goal_contributions','habit_weekly_goals','habit_logs'
   ] loop
     execute format('drop trigger if exists set_updated_at on public.%I', t);
@@ -317,7 +330,7 @@ declare t text;
 begin
   foreach t in array array[
     'profiles','user_modules','accounts','habits',
-    'categories','goals','debts','savings','transactions',
+    'categories','goals','debts','savings','savings_settings','transactions',
     'debt_payments','goal_contributions','habit_weekly_goals','habit_logs'
   ] loop
     execute format('alter table public.%I enable row level security', t);

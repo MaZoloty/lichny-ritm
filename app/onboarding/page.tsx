@@ -8,13 +8,14 @@ type AccountDraft = {
   id: string;
   name: string;
   startBalance: string;
+  isSavings: boolean;
 };
 
 const STARTER_ACCOUNTS: AccountDraft[] = [
-  { id: "card", name: "Карта", startBalance: "" },
-  { id: "cash", name: "Наличные", startBalance: "" },
-  { id: "savings", name: "Накопления", startBalance: "" },
-  { id: "other", name: "Другое", startBalance: "" },
+  { id: "card", name: "Карта", startBalance: "", isSavings: false },
+  { id: "cash", name: "Наличные", startBalance: "", isSavings: false },
+  { id: "savings", name: "Накопления", startBalance: "", isSavings: true },
+  { id: "other", name: "Другое", startBalance: "", isSavings: false },
 ];
 
 export default function OnboardingPage() {
@@ -30,14 +31,9 @@ export default function OnboardingPage() {
   const [debtName, setDebtName] = useState("");
   const [debtCurrent, setDebtCurrent] = useState("");
   const [debtMin, setDebtMin] = useState("");
-  const [saving, setSaving] = useState("");
 
   const has = (k: ModuleKey) => modules.has(k);
-  const toggle = <T,>(set: Set<T>, v: T): Set<T> => {
-    const next = new Set(set);
-    next.has(v) ? next.delete(v) : next.add(v);
-    return next;
-  };
+  const needsAccounts = has("finance") || has("savings");
 
   const hasMiniSetup = useMemo(
     () =>
@@ -46,6 +42,22 @@ export default function OnboardingPage() {
       ),
     [modules],
   );
+
+  function toggleModule(key: ModuleKey) {
+    setModules((current) => {
+      const next = new Set(current);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  }
+
+  function toggleHabit(name: string) {
+    setHabits((current) => {
+      const next = new Set(current);
+      next.has(name) ? next.delete(name) : next.add(name);
+      return next;
+    });
+  }
 
   function updateAccount(id: string, patch: Partial<AccountDraft>) {
     setAccounts((items) =>
@@ -56,7 +68,12 @@ export default function OnboardingPage() {
   function addAccount() {
     setAccounts((items) => [
       ...items,
-      { id: crypto.randomUUID(), name: "", startBalance: "" },
+      {
+        id: crypto.randomUUID(),
+        name: "",
+        startBalance: "",
+        isSavings: false,
+      },
     ]);
   }
 
@@ -70,11 +87,12 @@ export default function OnboardingPage() {
       const res = await completeOnboarding({
         modules: Array.from(modules),
         habits: has("habits") ? Array.from(habits) : [],
-        accounts: has("finance")
+        accounts: needsAccounts
           ? accounts
               .map((account) => ({
                 name: account.name.trim(),
                 start_balance: Number(account.startBalance) || 0,
+                is_savings: account.isSavings,
               }))
               .filter((account) => account.name.length > 0)
           : [],
@@ -90,7 +108,6 @@ export default function OnboardingPage() {
                 min: Number(debtMin) || 0,
               }
             : null,
-        saving: has("savings") ? { amount: Number(saving) || 0 } : null,
       });
       if (res?.error) setError(res.error);
     });
@@ -124,7 +141,9 @@ export default function OnboardingPage() {
 
       {step === 1 && (
         <div className="flex flex-1 flex-col justify-center">
-          <h1 className="text-2xl font-semibold">Соберём твою личную систему</h1>
+          <h1 className="text-2xl font-semibold">
+            Соберём твою личную систему
+          </h1>
           <p className="mt-3 text-muted">
             Выбери, что хочешь отслеживать сейчас. Можно начать с минимума и
             добавить остальное позже.
@@ -148,7 +167,7 @@ export default function OnboardingPage() {
               return (
                 <button
                   key={m.key}
-                  onClick={() => setModules(toggle(modules, m.key))}
+                  onClick={() => toggleModule(m.key)}
                   className={`card text-left transition ${
                     active ? "border-accent ring-1 ring-accent" : ""
                   }`}
@@ -191,7 +210,7 @@ export default function OnboardingPage() {
                     <input
                       type="checkbox"
                       checked={habits.has(h)}
-                      onChange={() => setHabits(toggle(habits, h))}
+                      onChange={() => toggleHabit(h)}
                       className="h-5 w-5 accent-accent"
                     />
                     <span>{h}</span>
@@ -201,14 +220,14 @@ export default function OnboardingPage() {
             </section>
           )}
 
-          {has("finance") && (
+          {needsAccounts && (
             <section className="card">
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div>
                   <h2 className="font-medium">С какой суммы начинаем?</h2>
                   <p className="mt-1 text-sm text-muted">
                     Укажи, сколько денег сейчас есть на карте, наличными или в
-                    накоплениях. Можно оставить 0 или пропустить.
+                    накоплениях. Стартовый баланс не считается доходом.
                   </p>
                 </div>
                 <button
@@ -252,6 +271,19 @@ export default function OnboardingPage() {
                       placeholder="Стартовая сумма"
                       className="field"
                     />
+                    <label className="mt-2 flex items-center gap-3 rounded-2xl bg-white/70 px-4 py-3 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={account.isSavings}
+                        onChange={(e) =>
+                          updateAccount(account.id, {
+                            isSavings: e.target.checked,
+                          })
+                        }
+                        className="h-5 w-5 accent-accent"
+                      />
+                      <span>Это сбережения</span>
+                    </label>
                   </div>
                 ))}
               </div>
@@ -273,13 +305,13 @@ export default function OnboardingPage() {
               <input
                 value={goalName}
                 onChange={(e) => setGoalName(e.target.value)}
-                placeholder="Например: Отпуск"
+                placeholder="Например: отпуск"
                 className="field mb-3"
               />
               <input
                 value={goalTarget}
                 onChange={(e) => setGoalTarget(e.target.value)}
-                inputMode="numeric"
+                inputMode="decimal"
                 placeholder="Целевая сумма"
                 className="field"
               />
@@ -299,31 +331,15 @@ export default function OnboardingPage() {
               <input
                 value={debtCurrent}
                 onChange={(e) => setDebtCurrent(e.target.value)}
-                inputMode="numeric"
+                inputMode="decimal"
                 placeholder="Текущий остаток"
                 className="field mb-3"
               />
               <input
                 value={debtMin}
                 onChange={(e) => setDebtMin(e.target.value)}
-                inputMode="numeric"
+                inputMode="decimal"
                 placeholder="Минимальный платёж"
-                className="field"
-              />
-            </section>
-          )}
-
-          {has("savings") && (
-            <section className="card">
-              <h2 className="font-medium">Текущая подушка</h2>
-              <p className="mb-3 text-sm text-muted">
-                Сколько уже отложено? Можно пропустить.
-              </p>
-              <input
-                value={saving}
-                onChange={(e) => setSaving(e.target.value)}
-                inputMode="numeric"
-                placeholder="Сумма"
                 className="field"
               />
             </section>
@@ -336,7 +352,9 @@ export default function OnboardingPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-green/40 text-2xl">
             ✓
           </div>
-          <h1 className="text-2xl font-semibold">Готово. Начинаем мягко.</h1>
+          <h1 className="text-2xl font-semibold">
+            Готово. Начинаем мягко.
+          </h1>
           <p className="mt-3 text-muted">
             Можно просто отмечать факты и постепенно настраивать систему под
             себя.

@@ -12,6 +12,7 @@ import {
 export default function AccountsManager({ accounts }: { accounts: Account[] }) {
   const [name, setName] = useState("");
   const [start, setStart] = useState("");
+  const [isSavings, setIsSavings] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -20,11 +21,16 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
     setError(null);
     if (!name.trim()) return;
     startTransition(async () => {
-      const res = await createAccount(name.trim(), Number(start) || 0);
+      const res = await createAccount(
+        name.trim(),
+        Number(start) || 0,
+        isSavings,
+      );
       if (res?.error) setError(res.error);
       else {
         setName("");
         setStart("");
+        setIsSavings(false);
       }
     });
   }
@@ -51,6 +57,15 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
             placeholder="Стартовый баланс"
             className="field"
           />
+          <label className="flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 text-sm">
+            <input
+              type="checkbox"
+              checked={isSavings}
+              onChange={(e) => setIsSavings(e.target.checked)}
+              className="h-5 w-5 accent-accent"
+            />
+            <span>Считать этот счёт сбережениями</span>
+          </label>
           {error && (
             <p className="rounded-2xl bg-peach/15 px-4 py-3 text-sm">{error}</p>
           )}
@@ -98,6 +113,7 @@ function AccountRow({
   const [name, setName] = useState(account.name);
   const [start, setStart] = useState(String(account.start_balance));
   const [current, setCurrent] = useState(String(account.current_balance));
+  const [isSavings, setIsSavings] = useState(Boolean(account.is_savings));
 
   function save() {
     startTransition(async () => {
@@ -105,6 +121,7 @@ function AccountRow({
         name,
         start_balance: Number(start) || 0,
         current_balance: Number(current) || 0,
+        is_savings: isSavings,
       });
       onToggle();
     });
@@ -124,6 +141,11 @@ function AccountRow({
             {account.name}
             {!account.is_active && " · скрыт"}
           </div>
+          {account.is_savings && (
+            <div className="mt-1 inline-flex rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+              Сбережения
+            </div>
+          )}
           <div className="text-sm text-muted">
             Старт {money(Number(account.start_balance), account.currency)} ·
             Сейчас {money(Number(account.current_balance), account.currency)}
@@ -156,6 +178,15 @@ function AccountRow({
             inputMode="decimal"
             className="field"
           />
+          <label className="flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 text-sm">
+            <input
+              type="checkbox"
+              checked={isSavings}
+              onChange={(e) => setIsSavings(e.target.checked)}
+              className="h-5 w-5 accent-accent"
+            />
+            <span>Считать этот счёт сбережениями</span>
+          </label>
           <button onClick={save} disabled={pending} className="btn-primary">
             Сохранить
           </button>

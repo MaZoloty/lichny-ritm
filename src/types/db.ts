@@ -25,6 +25,7 @@ export interface Account {
   start_balance: number;
   current_balance: number;
   currency: string;
+  is_savings: boolean;
   is_active: boolean;
 }
 
@@ -124,4 +125,12 @@ export interface Saving {
   account_id: string | null;
   comment: string | null;
   is_active: boolean;
+}
+
+export interface SavingsSettings {
+  id: string;
+  user_id: string;
+  emergency_target_amount: number;
+  created_at: string;
+  updated_at: string;
 }

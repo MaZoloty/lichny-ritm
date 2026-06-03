@@ -8,10 +8,9 @@ import { seedDefaultCategories } from "@/lib/categories";
 export interface OnboardingPayload {
   modules: ModuleKey[];
   habits: string[];
-  accounts: { name: string; start_balance: number }[];
+  accounts: { name: string; start_balance: number; is_savings?: boolean }[];
   goal: { name: string; target: number } | null;
   debt: { name: string; current: number; min: number } | null;
-  saving: { amount: number } | null;
 }
 
 export async function completeOnboarding(
@@ -25,7 +24,6 @@ export async function completeOnboarding(
 
   const uid = user.id;
 
-  // 1. Модули: пишем все, включая выключенные (для настроек).
   const moduleRows = MODULES.map((m) => ({
     user_id: uid,
     module_key: m.key,
@@ -36,7 +34,6 @@ export async function completeOnboarding(
     .upsert(moduleRows, { onConflict: "user_id,module_key" });
   if (modErr) return { error: "Не удалось сохранить выбор модулей." };
 
-  // 2. Привычки
   if (payload.modules.includes("habits") && payload.habits.length) {
     await supabase.from("habits").insert(
       payload.habits.map((name) => ({
@@ -48,8 +45,10 @@ export async function completeOnboarding(
     );
   }
 
-  // 3. Финансы: счета + дефолтные категории
-  if (payload.modules.includes("finance")) {
+  if (
+    payload.modules.includes("finance") ||
+    payload.modules.includes("savings")
+  ) {
     if (payload.accounts.length) {
       await supabase.from("accounts").insert(
         payload.accounts.map((account) => {
@@ -60,15 +59,18 @@ export async function completeOnboarding(
             start_balance: startBalance,
             current_balance: startBalance,
             currency: "RUB",
+            is_savings: Boolean(account.is_savings),
             is_active: true,
           };
         }),
       );
     }
+  }
+
+  if (payload.modules.includes("finance")) {
     await seedDefaultCategories(supabase, uid);
   }
 
-  // 4. Цель
   if (payload.modules.includes("goals") && payload.goal?.name) {
     await supabase.from("goals").insert({
       user_id: uid,
@@ -77,7 +79,6 @@ export async function completeOnboarding(
     });
   }
 
-  // 5. Долг
   if (payload.modules.includes("debts") && payload.debt?.name) {
     await supabase.from("debts").insert({
       user_id: uid,
@@ -88,21 +89,15 @@ export async function completeOnboarding(
     });
   }
 
-  // 6. Сбережения
-  if (payload.modules.includes("savings") && payload.saving) {
-    await supabase.from("savings").insert({
-      user_id: uid,
-      name: "Подушка",
-      current_amount: payload.saving.amount || 0,
-    });
-  }
-
-  // Завершаем онбординг
   const { error: profErr } = await supabase
     .from("profiles")
     .update({ onboarding_completed: true })
     .eq("user_id", uid);
-  if (profErr) return { error: "Почти готово, но не удалось сохранить профиль." };
+  if (profErr) {
+    return {
+      error: "Почти готово, но не удалось сохранить профиль.",
+    };
+  }
 
   redirect("/");
 }

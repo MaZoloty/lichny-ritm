@@ -18,6 +18,7 @@ async function getUser() {
 function refresh() {
   revalidatePath("/finance");
   revalidatePath("/");
+  revalidatePath("/savings");
   revalidatePath("/settings/accounts");
   revalidatePath("/settings/categories");
 }
@@ -176,6 +177,7 @@ export async function deleteTransaction(id: string): Promise<Result> {
 export async function createAccount(
   name: string,
   startBalance = 0,
+  isSavings = false,
 ): Promise<Result & { id?: string }> {
   const { supabase, user } = await getUser();
   if (!user) return { error: "Нет доступа." };
@@ -189,6 +191,7 @@ export async function createAccount(
       start_balance: Number.isFinite(startBalance) ? startBalance : 0,
       current_balance: Number.isFinite(startBalance) ? startBalance : 0,
       currency: "RUB",
+      is_savings: isSavings,
       is_active: true,
     })
     .select("id")
@@ -201,7 +204,12 @@ export async function createAccount(
 
 export async function updateAccount(
   id: string,
-  fields: { name?: string; start_balance?: number; current_balance?: number },
+  fields: {
+    name?: string;
+    start_balance?: number;
+    current_balance?: number;
+    is_savings?: boolean;
+  },
 ): Promise<Result> {
   const { supabase, user } = await getUser();
   if (!user) return { error: "Нет доступа." };
@@ -219,6 +227,7 @@ export async function updateAccount(
     patch.current_balance = Number.isFinite(fields.current_balance)
       ? fields.current_balance
       : 0;
+  if (fields.is_savings !== undefined) patch.is_savings = fields.is_savings;
 
   const { error } = await supabase
     .from("accounts")
