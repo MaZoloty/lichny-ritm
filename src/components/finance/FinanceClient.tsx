@@ -160,16 +160,19 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
               <li key={a.accountId ?? "none"} className="soft-tile">
                 <div className="flex justify-between gap-3">
                   <span className="font-medium">{a.name}</span>
-                  <span className={`font-semibold ${a.diff < 0 ? "text-peach" : "text-ink"}`}>
-                    {signedMoney(a.diff, a.currency)}
-                  </span>
+                  <div className="text-right">
+                    <div className="text-[11px] text-muted">Сейчас</div>
+                    <div className="font-semibold text-ink">
+                      {a.currentBalance !== null
+                        ? money(a.currentBalance, a.currency)
+                        : "—"}
+                    </div>
+                  </div>
                 </div>
                 <div className="text-xs text-muted">
                   Доходы {money(a.income, a.currency)} · Расходы{" "}
                   {money(a.expense, a.currency)} · Разница{" "}
                   {signedMoney(a.diff, a.currency)}
-                  {a.currentBalance !== null &&
-                    ` · Текущий баланс ${money(a.currentBalance, a.currency)}`}
                 </div>
               </li>
             ))}
