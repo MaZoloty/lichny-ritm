@@ -134,3 +134,54 @@ export interface SavingsSettings {
   created_at: string;
   updated_at: string;
 }
+
+export interface RemindersSettings {
+  id: string;
+  user_id: string;
+  finance_enabled: boolean;
+  finance_times: string[];
+  habits_enabled: boolean;
+  habits_times: string[];
+  debts_enabled: boolean;
+  debts_days_before: number;
+  monday_goals_enabled: boolean;
+  monday_goals_time: string;
+  savings_enabled: boolean;
+  savings_day_of_month: number | null;
+  savings_time: string;
+  timezone: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ReminderEventStatus =
+  | "pending"
+  | "shown"
+  | "sent"
+  | "skipped"
+  | "failed";
+
+export interface ReminderEvent {
+  id: string;
+  user_id: string;
+  type: string;
+  scheduled_for: string | null;
+  shown_at: string | null;
+  sent_at: string | null;
+  status: ReminderEventStatus;
+  payload: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PushSubscriptionRow {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_agent: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}

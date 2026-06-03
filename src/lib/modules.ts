@@ -62,6 +62,7 @@ export const MODULES: ModuleInfo[] = [
     description:
       "Мягкие вечерние напоминания заполнить финансы и отметить привычки.",
     inNav: false,
+    href: "/settings/reminders",
   },
 ];
 

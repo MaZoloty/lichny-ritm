@@ -306,6 +306,64 @@ create table if not exists public.habit_logs (
 create index if not exists habit_logs_user_date_idx
   on public.habit_logs (user_id, date);
 
+-- =====================================================================
+--  Напоминания (Этап «Напоминания»)
+-- =====================================================================
+
+-- Настройки напоминаний пользователя.
+create table if not exists public.reminders_settings (
+  id                    uuid primary key default gen_random_uuid(),
+  user_id               uuid not null unique references auth.users(id) on delete cascade,
+  finance_enabled       boolean not null default true,
+  finance_times         text[]  not null default array['20:30','21:30','22:30'],
+  habits_enabled        boolean not null default true,
+  habits_times          text[]  not null default array['21:00'],
+  debts_enabled         boolean not null default true,
+  debts_days_before     integer not null default 2,
+  monday_goals_enabled  boolean not null default true,
+  monday_goals_time     text    not null default '10:00',
+  savings_enabled       boolean not null default false,
+  savings_day_of_month  integer,
+  savings_time          text    not null default '11:00',
+  timezone              text,
+  created_at            timestamptz not null default now(),
+  updated_at            timestamptz not null default now()
+);
+
+-- Журнал показанных/отправленных напоминаний (чтобы не дублировать).
+create table if not exists public.reminder_events (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  type          text not null,
+  scheduled_for timestamptz,
+  shown_at      timestamptz,
+  sent_at       timestamptz,
+  status        text not null default 'pending',
+  payload       jsonb,
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+
+create index if not exists reminder_events_user_idx
+  on public.reminder_events (user_id, type, scheduled_for desc);
+
+-- Подписки на web push (подготовка под будущие уведомления).
+create table if not exists public.push_subscriptions (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  endpoint    text not null,
+  p256dh      text not null,
+  auth        text not null,
+  user_agent  text,
+  is_active   boolean not null default true,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  unique (user_id, endpoint)
+);
+
+create index if not exists push_subscriptions_user_idx
+  on public.push_subscriptions (user_id, is_active);
+
 -- ---------- Триггеры updated_at для всех таблиц ----------------------
 do $$
 declare t text;
@@ -313,7 +371,8 @@ begin
   foreach t in array array[
     'profiles','user_modules','accounts','habits',
     'categories','goals','debts','savings','savings_settings','transactions',
-    'debt_payments','goal_contributions','habit_weekly_goals','habit_logs'
+    'debt_payments','goal_contributions','habit_weekly_goals','habit_logs',
+    'reminders_settings','reminder_events','push_subscriptions'
   ] loop
     execute format('drop trigger if exists set_updated_at on public.%I', t);
     execute format(
@@ -331,7 +390,8 @@ begin
   foreach t in array array[
     'profiles','user_modules','accounts','habits',
     'categories','goals','debts','savings','savings_settings','transactions',
-    'debt_payments','goal_contributions','habit_weekly_goals','habit_logs'
+    'debt_payments','goal_contributions','habit_weekly_goals','habit_logs',
+    'reminders_settings','reminder_events','push_subscriptions'
   ] loop
     execute format('alter table public.%I enable row level security', t);
 

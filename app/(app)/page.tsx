@@ -10,6 +10,7 @@ import { loadSavings } from "@/lib/savings-data";
 import { completedInWeek, overallProgress, percentOf } from "@/lib/habits";
 import { goalPercent } from "@/lib/goals";
 import LocalGreeting from "@/components/LocalGreeting";
+import TodayReminders from "@/components/reminders/TodayReminders";
 
 export default async function HomePage() {
   const ctx = await getUserContext();
@@ -91,6 +92,8 @@ export default async function HomePage() {
           )}
         </section>
       )}
+
+      {enabled.has("reminders") && <TodayReminders />}
 
       {empty && (
         <div className="card text-center">

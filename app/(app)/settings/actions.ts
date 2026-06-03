@@ -52,6 +52,8 @@ const RESET_TABLES: { table: string; optional?: boolean }[] = [
   { table: "debts" },
   { table: "accounts" },
   { table: "categories" },
+  { table: "reminder_events", optional: true },
+  { table: "push_subscriptions", optional: true },
   { table: "reminders_settings", optional: true },
   { table: "user_modules" },
 ];
