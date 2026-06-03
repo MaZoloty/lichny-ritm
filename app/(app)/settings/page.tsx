@@ -6,6 +6,7 @@ import { MODULES, type ModuleKey } from "@/lib/modules";
 import PageHeader from "@/components/PageHeader";
 import ModuleToggles from "@/components/ModuleToggles";
 import ProfileNameForm from "@/components/ProfileNameForm";
+import ResetDataButton from "@/components/ResetDataButton";
 import type { Account } from "@/types/db";
 
 interface Category {
@@ -112,6 +113,13 @@ export default async function SettingsPage() {
           >
             Управлять счетами
           </Link>
+        </Section>
+
+        <Section
+          title="Управление данными"
+          hint="Для тестирования можно очистить данные приложения и пройти онбординг заново."
+        >
+          <ResetDataButton />
         </Section>
 
         <Section
