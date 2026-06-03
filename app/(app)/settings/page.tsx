@@ -40,12 +40,23 @@ export default async function SettingsPage() {
       <div className="flex flex-col gap-4 px-5">
         <Section title="Профиль">
           <ProfileNameForm initial={ctx.profile?.display_name ?? ""} />
-          <p className="mt-3 text-sm text-muted">{ctx.email}</p>
+          <div className="mt-4 rounded-2xl bg-bg px-4 py-3">
+            <div className="text-xs text-muted">Email</div>
+            <div className="mt-1 break-all text-sm">{ctx.email ?? "Не указан"}</div>
+          </div>
+          <p className="mt-3 text-sm text-muted">
+            После выхода можно войти под другим пользователем.
+          </p>
+          <form action="/auth/signout" method="post" className="mt-3">
+            <button type="submit" className="btn-ghost w-full text-peach">
+              Выйти из аккаунта
+            </button>
+          </form>
         </Section>
 
         <Section
           title="Модули"
-          hint="Выключенный модуль просто скрывается — данные сохраняются."
+          hint="Выключенный модуль просто скрывается, данные сохраняются."
         >
           <ModuleToggles initial={initialModules} />
         </Section>
@@ -103,21 +114,21 @@ export default async function SettingsPage() {
           </Link>
         </Section>
 
-        <Section title="Уведомления" hint="Появятся на следующем этапе.">
+        <Section
+          title="Уведомления"
+          hint="Появятся на следующем этапе."
+        >
           <p className="text-sm text-muted">
-            Мягкие вечерние напоминания — скоро.
+            Мягкие вечерние напоминания скоро.
           </p>
         </Section>
 
-        <Section title="Внешний вид" hint="Появится на следующем этапе.">
+        <Section
+          title="Внешний вид"
+          hint="Появится на следующем этапе."
+        >
           <p className="text-sm text-muted">Светлая тема.</p>
         </Section>
-
-        <form action="/auth/signout" method="post">
-          <button type="submit" className="btn-ghost w-full text-peach">
-            Выйти
-          </button>
-        </form>
       </div>
     </>
   );
