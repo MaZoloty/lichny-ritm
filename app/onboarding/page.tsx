@@ -1,27 +1,30 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import {
-  MODULES,
-  STARTER_HABITS,
-  type ModuleKey,
-} from "@/lib/modules";
+import { MODULES, STARTER_HABITS, type ModuleKey } from "@/lib/modules";
 import { completeOnboarding } from "./actions";
 
-const STARTER_ACCOUNTS = ["Карта", "Наличные", "Накопления", "Другое"];
+type AccountDraft = {
+  id: string;
+  name: string;
+  startBalance: string;
+};
+
+const STARTER_ACCOUNTS: AccountDraft[] = [
+  { id: "card", name: "Карта", startBalance: "" },
+  { id: "cash", name: "Наличные", startBalance: "" },
+  { id: "savings", name: "Накопления", startBalance: "" },
+  { id: "other", name: "Другое", startBalance: "" },
+];
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  // выбранные модули
   const [modules, setModules] = useState<Set<ModuleKey>>(new Set());
-  // мини-настройка
   const [habits, setHabits] = useState<Set<string>>(new Set(STARTER_HABITS));
-  const [accounts, setAccounts] = useState<Set<string>>(
-    new Set(["Карта", "Наличные"]),
-  );
+  const [accounts, setAccounts] = useState<AccountDraft[]>(STARTER_ACCOUNTS);
   const [goalName, setGoalName] = useState("");
   const [goalTarget, setGoalTarget] = useState("");
   const [debtName, setDebtName] = useState("");
@@ -36,7 +39,6 @@ export default function OnboardingPage() {
     return next;
   };
 
-  // Нужен ли шаг мини-настройки (есть ли что настраивать)
   const hasMiniSetup = useMemo(
     () =>
       ["habits", "finance", "goals", "debts", "savings"].some((k) =>
@@ -45,13 +47,37 @@ export default function OnboardingPage() {
     [modules],
   );
 
+  function updateAccount(id: string, patch: Partial<AccountDraft>) {
+    setAccounts((items) =>
+      items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
+  }
+
+  function addAccount() {
+    setAccounts((items) => [
+      ...items,
+      { id: crypto.randomUUID(), name: "", startBalance: "" },
+    ]);
+  }
+
+  function removeAccount(id: string) {
+    setAccounts((items) => items.filter((item) => item.id !== id));
+  }
+
   function submit() {
     setError(null);
     startTransition(async () => {
       const res = await completeOnboarding({
         modules: Array.from(modules),
         habits: has("habits") ? Array.from(habits) : [],
-        accounts: has("finance") ? Array.from(accounts) : [],
+        accounts: has("finance")
+          ? accounts
+              .map((account) => ({
+                name: account.name.trim(),
+                start_balance: Number(account.startBalance) || 0,
+              }))
+              .filter((account) => account.name.length > 0)
+          : [],
         goal:
           has("goals") && goalName.trim()
             ? { name: goalName.trim(), target: Number(goalTarget) || 0 }
@@ -77,16 +103,15 @@ export default function OnboardingPage() {
       return;
     }
     if (step === 2 && !hasMiniSetup) {
-      setStep(4); // нечего настраивать — сразу к финалу
+      setStep(4);
       return;
     }
     setStep(step + 1);
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 pt-safe pb-10">
-      {/* индикатор шагов */}
-      <div className="mt-6 mb-8 flex gap-2">
+    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 pb-10 pt-safe">
+      <div className="mb-8 mt-6 flex gap-2">
         {[1, 2, 3, 4].map((s) => (
           <div
             key={s}
@@ -97,7 +122,6 @@ export default function OnboardingPage() {
         ))}
       </div>
 
-      {/* ШАГ 1 — приветствие */}
       {step === 1 && (
         <div className="flex flex-1 flex-col justify-center">
           <h1 className="text-2xl font-semibold">Соберём твою личную систему</h1>
@@ -111,12 +135,12 @@ export default function OnboardingPage() {
         </div>
       )}
 
-      {/* ШАГ 2 — выбор модулей */}
       {step === 2 && (
         <div className="flex flex-1 flex-col">
           <h1 className="text-2xl font-semibold">Что отслеживаем?</h1>
           <p className="mt-2 text-muted">
-            Можно выбрать один или несколько разделов. Остальное добавишь в настройках.
+            Можно выбрать один или несколько разделов. Остальное добавишь в
+            настройках.
           </p>
           <div className="mt-6 flex flex-col gap-3">
             {MODULES.map((m) => {
@@ -151,7 +175,6 @@ export default function OnboardingPage() {
         </div>
       )}
 
-      {/* ШАГ 3 — мини-настройка */}
       {step === 3 && (
         <div className="flex flex-1 flex-col gap-6">
           <h1 className="text-2xl font-semibold">Немного настроим</h1>
@@ -160,7 +183,7 @@ export default function OnboardingPage() {
             <section className="card">
               <h2 className="font-medium">Стартовые привычки</h2>
               <p className="mb-3 text-sm text-muted">
-                Оставь те, что подходят. Остальные можно убрать.
+                Оставь то, что подходит. Остальные можно убрать.
               </p>
               <div className="flex flex-col gap-2">
                 {STARTER_HABITS.map((h) => (
@@ -180,21 +203,66 @@ export default function OnboardingPage() {
 
           {has("finance") && (
             <section className="card">
-              <h2 className="font-medium">Хочешь добавить стартовые счета?</h2>
-              <p className="mb-3 text-sm text-muted">Можно пропустить.</p>
-              <div className="flex flex-col gap-2">
-                {STARTER_ACCOUNTS.map((a) => (
-                  <label key={a} className="flex items-center gap-3">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="font-medium">С какой суммы начинаем?</h2>
+                  <p className="mt-1 text-sm text-muted">
+                    Укажи, сколько денег сейчас есть на карте, наличными или в
+                    накоплениях. Можно оставить 0 или пропустить.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAccounts([])}
+                  className="shrink-0 text-sm text-muted"
+                >
+                  Пропустить
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                {accounts.map((account) => (
+                  <div key={account.id} className="rounded-2xl bg-bg p-3">
+                    <div className="mb-2 flex items-center gap-2">
+                      <input
+                        value={account.name}
+                        onChange={(e) =>
+                          updateAccount(account.id, { name: e.target.value })
+                        }
+                        placeholder="Название счёта"
+                        className="field"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeAccount(account.id)}
+                        className="px-2 text-sm text-muted"
+                        aria-label="Убрать счёт"
+                      >
+                        ×
+                      </button>
+                    </div>
                     <input
-                      type="checkbox"
-                      checked={accounts.has(a)}
-                      onChange={() => setAccounts(toggle(accounts, a))}
-                      className="h-5 w-5 accent-accent"
+                      value={account.startBalance}
+                      onChange={(e) =>
+                        updateAccount(account.id, {
+                          startBalance: e.target.value,
+                        })
+                      }
+                      inputMode="decimal"
+                      placeholder="Стартовая сумма"
+                      className="field"
                     />
-                    <span>{a}</span>
-                  </label>
+                  </div>
                 ))}
               </div>
+
+              <button
+                type="button"
+                onClick={addAccount}
+                className="btn-ghost mt-3 w-full"
+              >
+                Добавить свой счёт
+              </button>
             </section>
           )}
 
@@ -263,7 +331,6 @@ export default function OnboardingPage() {
         </div>
       )}
 
-      {/* ШАГ 4 — завершение */}
       {step === 4 && (
         <div className="flex flex-1 flex-col justify-center text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-green/40 text-2xl">
@@ -283,11 +350,10 @@ export default function OnboardingPage() {
         </p>
       )}
 
-      {/* навигация */}
       <div className="mt-8 flex gap-3 pb-safe">
         {step > 1 && step < 4 && (
           <button
-            onClick={() => setStep(step === 4 && !hasMiniSetup ? 2 : step - 1)}
+            onClick={() => setStep(step - 1)}
             className="btn-ghost flex-1"
           >
             Назад
@@ -309,7 +375,7 @@ export default function OnboardingPage() {
             disabled={pending}
             className="btn-primary flex-1"
           >
-            {pending ? "Минутку…" : "Перейти в приложение"}
+            {pending ? "Минутку..." : "Перейти в приложение"}
           </button>
         )}
       </div>

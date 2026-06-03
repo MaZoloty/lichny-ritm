@@ -1,23 +1,49 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_MODULE_ORDER, NAV_SHORT_LABEL, type ModuleKey } from "@/lib/modules";
-
-const ICONS: Record<string, string> = {
-  "/": "◍",
-  "/habits": "✦",
-  "/finance": "₽",
-  "/goals": "◎",
-  "/debts": "▭",
-  "/savings": "❀",
-  "/settings": "⚙",
-};
+import {
+  CalendarCheck,
+  Home,
+  Landmark,
+  MoreHorizontal,
+  PiggyBank,
+  Settings,
+  Target,
+  Wallet,
+  Bell,
+  Circle,
+  type LucideIcon,
+} from "lucide-react";
+import { MODULE_MAP, type ModuleKey } from "@/lib/modules";
 
 interface NavItem {
   href: string;
   label: string;
+  icon: LucideIcon;
 }
+
+const PRIMARY_MODULES: ModuleKey[] = ["habits", "finance", "goals"];
+const MORE_MODULES: ModuleKey[] = ["debts", "savings", "reminders"];
+
+const MODULE_LABEL: Partial<Record<ModuleKey, string>> = {
+  habits: "Привычки",
+  finance: "Финансы",
+  goals: "Цели",
+  debts: "Долги",
+  savings: "Сбережения",
+  reminders: "Напоминания",
+};
+
+const MODULE_ICON: Partial<Record<ModuleKey, LucideIcon>> = {
+  habits: CalendarCheck,
+  finance: Wallet,
+  goals: Target,
+  debts: Landmark,
+  savings: PiggyBank,
+  reminders: Bell,
+};
 
 export default function BottomNav({
   enabledModules,
@@ -25,46 +51,115 @@ export default function BottomNav({
   enabledModules: ModuleKey[];
 }) {
   const pathname = usePathname();
+  const [moreOpen, setMoreOpen] = useState(false);
   const enabled = new Set(enabledModules);
 
-  const items: NavItem[] = [{ href: "/", label: "Главная" }];
+  const primaryItems: NavItem[] = [
+    { href: "/", label: "Главная", icon: Home },
+    ...PRIMARY_MODULES.filter((key) => enabled.has(key)).map((key) =>
+      moduleToItem(key),
+    ),
+  ];
 
-  for (const key of NAV_MODULE_ORDER) {
-    if (enabled.has(key)) {
-      items.push({
-        href: `/${key}`,
-        label: NAV_SHORT_LABEL[key] ?? key,
-      });
-    }
-  }
+  const moreItems: NavItem[] = [
+    ...MORE_MODULES.filter((key) => enabled.has(key)).map((key) =>
+      moduleToItem(key),
+    ),
+    ...enabledModules
+      .filter(
+        (key) =>
+          !PRIMARY_MODULES.includes(key) && !MORE_MODULES.includes(key),
+      )
+      .map((key) => moduleToItem(key)),
+    { href: "/settings", label: "Настройки", icon: Settings },
+  ];
 
-  items.push({ href: "/settings", label: "Настройки" });
+  const moreActive = moreItems.some((item) => isActive(pathname, item.href));
+  const visiblePrimaryItems = primaryItems.slice(0, 4);
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/95 backdrop-blur">
-      <ul className="mx-auto flex max-w-md items-stretch justify-around px-2 pb-safe pt-2">
-        {items.map((item) => {
-          const active =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
-          return (
-            <li key={item.href} className="flex-1">
-              <Link
-                href={item.href}
-                className={`flex flex-col items-center gap-0.5 rounded-2xl py-1 text-[11px] ${
-                  active ? "text-accent" : "text-muted"
-                }`}
-              >
-                <span className="text-lg leading-none">
-                  {ICONS[item.href] ?? "•"}
-                </span>
-                <span className="truncate">{item.label}</span>
-              </Link>
+      <div className="relative mx-auto max-w-md px-2 pb-safe pt-2">
+        {moreOpen && (
+          <div className="absolute inset-x-3 bottom-full mb-2 rounded-2xl border border-line bg-card p-2 shadow-soft">
+            <div className="grid grid-cols-2 gap-2">
+              {moreItems.map((item) => {
+                const active = isActive(pathname, item.href);
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className={`flex items-center gap-2 rounded-2xl px-3 py-2 text-sm ${
+                      active
+                        ? "bg-accent/10 text-accent"
+                        : "bg-bg text-muted"
+                    }`}
+                  >
+                    <Icon size={18} strokeWidth={1.9} />
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <ul
+          className="grid items-stretch gap-1"
+          style={{
+            gridTemplateColumns: `repeat(${visiblePrimaryItems.length + 1}, minmax(0, 1fr))`,
+          }}
+        >
+          {visiblePrimaryItems.map((item) => (
+            <li key={item.href}>
+              <NavLink item={item} active={isActive(pathname, item.href)} />
             </li>
-          );
-        })}
-      </ul>
+          ))}
+          <li>
+            <button
+              type="button"
+              onClick={() => setMoreOpen((open) => !open)}
+              className={`flex h-full w-full flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1.5 text-[11px] ${
+                moreActive || moreOpen ? "text-accent" : "text-muted"
+              }`}
+            >
+              <MoreHorizontal size={22} strokeWidth={1.9} />
+              <span className="truncate">Ещё</span>
+            </button>
+          </li>
+        </ul>
+      </div>
     </nav>
   );
+}
+
+function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+  const Icon = item.icon;
+
+  return (
+    <Link
+      href={item.href}
+      className={`flex h-full flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1.5 text-[11px] ${
+        active ? "text-accent" : "text-muted"
+      }`}
+    >
+      <Icon size={22} strokeWidth={1.9} />
+      <span className="truncate">{item.label}</span>
+    </Link>
+  );
+}
+
+function moduleToItem(key: ModuleKey): NavItem {
+  const href = MODULE_MAP[key].href ?? "/settings";
+  return {
+    href,
+    label: MODULE_LABEL[key] ?? MODULE_MAP[key].title,
+    icon: MODULE_ICON[key] ?? Circle,
+  };
+}
+
+function isActive(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }

@@ -8,6 +8,7 @@ import { loadFinance } from "@/lib/finance-data";
 import { loadGoals } from "@/lib/goals-data";
 import { completedInWeek, overallProgress, percentOf } from "@/lib/habits";
 import { goalPercent } from "@/lib/goals";
+import LocalGreeting from "@/components/LocalGreeting";
 import type { Debt, Saving } from "@/types/db";
 
 export default async function HomePage() {
@@ -70,8 +71,7 @@ export default async function HomePage() {
     <main className="px-5 pt-safe">
       <header className="mb-6 mt-4">
         <p className="text-muted">
-          {greeting()}
-          {name ? `, ${name}` : ""}
+          <LocalGreeting name={name} />
         </p>
         <h1 className="text-2xl font-semibold">Твой ритм сегодня</h1>
       </header>
@@ -279,12 +279,4 @@ function Progress({ value }: { value: number }) {
       />
     </div>
   );
-}
-
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 6) return "Доброй ночи";
-  if (h < 12) return "Доброе утро";
-  if (h < 18) return "Добрый день";
-  return "Добрый вечер";
 }

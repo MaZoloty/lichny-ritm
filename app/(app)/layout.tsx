@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getUserContext } from "@/lib/data";
-import { NAV_MODULE_ORDER } from "@/lib/modules";
+import { MODULES } from "@/lib/modules";
 import BottomNav from "@/components/BottomNav";
 
 export default async function AppLayout({
@@ -12,7 +12,7 @@ export default async function AppLayout({
   if (!ctx) redirect("/login");
   if (!ctx.profile?.onboarding_completed) redirect("/onboarding");
 
-  const navModules = NAV_MODULE_ORDER.filter((k) =>
+  const navModules = MODULES.map((m) => m.key).filter((k) =>
     ctx.enabledModules.has(k),
   );
 

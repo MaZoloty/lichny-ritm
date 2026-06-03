@@ -21,16 +21,18 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
   const [editing, setEditing] = useState<TxView | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const todayISO = new Intl.DateTimeFormat("en-CA").format(new Date()); // YYYY-MM-DD
+  const todayISO = new Intl.DateTimeFormat("en-CA").format(new Date());
 
   function openAdd() {
     setEditing(null);
     setModalOpen(true);
   }
+
   function openEdit(t: TxView) {
     setEditing(t);
     setModalOpen(true);
   }
+
   function makeDefaults() {
     startTransition(async () => {
       await createDefaultCategories();
@@ -38,16 +40,21 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
   }
 
   const diffTone =
-    data.diff > 0 ? "в плюсе" : data.diff < 0 ? "расходы выше доходов" : "ровно";
+    data.diff > 0
+      ? "в плюсе"
+      : data.diff < 0
+        ? "расходы выше доходов"
+        : "ровно";
 
   return (
-    <main className="px-5 pt-safe pb-6">
+    <main className="px-5 pb-6 pt-safe">
       <header className="mb-4 mt-4">
         <h1 className="text-2xl font-semibold">Финансы</h1>
-        <p className="text-muted">Деньги любят ясность. Просто зафиксируй факт.</p>
+        <p className="text-muted">
+          Деньги любят ясность. Просто зафиксируй факт.
+        </p>
       </header>
 
-      {/* Переключатель периода */}
       <div className="mb-4 flex gap-2">
         {PERIODS.map((p) => (
           <Link
@@ -65,7 +72,6 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
         ))}
       </div>
 
-      {/* Сводка периода */}
       <div className="mb-4 grid grid-cols-3 gap-2">
         <div className="card p-4">
           <div className="text-xs text-muted">Доходы</div>
@@ -96,19 +102,22 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
         + Добавить операцию
       </button>
 
-      {/* Пустое состояние: нет счетов */}
       {data.accounts.length === 0 && (
         <div className="card mb-4 text-center text-sm text-muted">
+          <h2 className="mb-2 text-base font-medium text-ink">
+            Добавим стартовую точку
+          </h2>
           <p className="mb-3">
-            Добавим первый счёт, чтобы операции было куда записывать.
+            Укажи, сколько денег сейчас есть на карте, наличными или в
+            накоплениях. Дальше приложение будет считать доходы и расходы от
+            этой суммы.
           </p>
           <Link href="/settings/accounts" className="btn-primary inline-flex">
-            Создать счёт
+            Добавить счета
           </Link>
         </div>
       )}
 
-      {/* Пустое состояние: нет категорий */}
       {data.categories.length === 0 && (
         <div className="card mb-4 text-center text-sm text-muted">
           <p className="mb-3">
@@ -124,7 +133,6 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
         </div>
       )}
 
-      {/* Аналитика по категориям */}
       {data.expenseByCategory.length > 0 && (
         <CategoryBlock
           title="Расходы по категориям"
@@ -142,26 +150,24 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
         />
       )}
 
-      {/* По счетам */}
       {data.byAccount.length > 0 && (
         <section className="card mb-4">
           <h2 className="mb-3 font-medium">По счетам</h2>
           <ul className="flex flex-col gap-3">
             {data.byAccount.map((a) => (
               <li key={a.accountId ?? "none"}>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-3">
                   <span>{a.name}</span>
-                  <span
-                    className={a.diff < 0 ? "text-peach" : "text-ink"}
-                  >
+                  <span className={a.diff < 0 ? "text-peach" : "text-ink"}>
                     {signedMoney(a.diff, a.currency)}
                   </span>
                 </div>
                 <div className="text-xs text-muted">
                   Доходы {money(a.income, a.currency)} · Расходы{" "}
-                  {money(a.expense, a.currency)}
+                  {money(a.expense, a.currency)} · Разница{" "}
+                  {signedMoney(a.diff, a.currency)}
                   {a.currentBalance !== null &&
-                    ` · Баланс ${money(a.currentBalance, a.currency)}`}
+                    ` · Текущий баланс ${money(a.currentBalance, a.currency)}`}
                 </div>
               </li>
             ))}
@@ -169,7 +175,6 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
         </section>
       )}
 
-      {/* Последние операции */}
       <section className="card">
         <h2 className="mb-3 font-medium">Последние операции</h2>
         {data.transactions.length === 0 ? (

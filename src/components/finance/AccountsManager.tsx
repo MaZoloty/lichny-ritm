@@ -32,19 +32,23 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
   return (
     <div className="flex flex-col gap-4">
       <section className="card">
-        <h2 className="mb-3 font-medium">Новый счёт</h2>
+        <h2 className="mb-2 font-medium">Новый счёт</h2>
+        <p className="mb-3 text-sm text-muted">
+          Стартовый баланс станет текущим балансом счёта. Это не доход и не
+          попадёт в аналитику периода.
+        </p>
         <div className="flex flex-col gap-2">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Название (например, Карта)"
+            placeholder="Название счёта"
             className="field"
           />
           <input
             value={start}
             onChange={(e) => setStart(e.target.value)}
             inputMode="decimal"
-            placeholder="Стартовый баланс (необязательно)"
+            placeholder="Стартовый баланс"
             className="field"
           />
           {error && (
@@ -57,7 +61,9 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
       </section>
 
       {accounts.length === 0 ? (
-        <div className="card text-center text-muted">Счетов пока нет.</div>
+        <div className="card text-center text-muted">
+          Счетов пока нет. Добавь карту, наличные или накопления.
+        </div>
       ) : (
         <div className="flex flex-col gap-2">
           {accounts.map((a) => (
@@ -103,6 +109,7 @@ function AccountRow({
       onToggle();
     });
   }
+
   function toggleActive() {
     startTransition(async () => {
       await setAccountActive(account.id, !account.is_active);
@@ -111,14 +118,15 @@ function AccountRow({
 
   return (
     <div className="card">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <div className={account.is_active ? "" : "text-muted"}>
             {account.name}
             {!account.is_active && " · скрыт"}
           </div>
           <div className="text-sm text-muted">
-            {money(Number(account.current_balance), account.currency)}
+            Старт {money(Number(account.start_balance), account.currency)} ·
+            Сейчас {money(Number(account.current_balance), account.currency)}
           </div>
         </div>
         <button onClick={onToggle} className="text-sm text-accent">

@@ -186,8 +186,10 @@ export async function createAccount(
     .insert({
       user_id: user.id,
       name: name.trim(),
-      start_balance: startBalance,
-      current_balance: startBalance,
+      start_balance: Number.isFinite(startBalance) ? startBalance : 0,
+      current_balance: Number.isFinite(startBalance) ? startBalance : 0,
+      currency: "RUB",
+      is_active: true,
     })
     .select("id")
     .single();
@@ -205,11 +207,18 @@ export async function updateAccount(
   if (!user) return { error: "Нет доступа." };
 
   const patch: Record<string, unknown> = {};
-  if (fields.name !== undefined) patch.name = fields.name.trim();
+  if (fields.name !== undefined) {
+    if (!fields.name.trim()) return { error: "РќСѓР¶РЅРѕ РЅР°Р·РІР°РЅРёРµ СЃС‡С‘С‚Р°." };
+    patch.name = fields.name.trim();
+  }
   if (fields.start_balance !== undefined)
-    patch.start_balance = fields.start_balance;
+    patch.start_balance = Number.isFinite(fields.start_balance)
+      ? fields.start_balance
+      : 0;
   if (fields.current_balance !== undefined)
-    patch.current_balance = fields.current_balance;
+    patch.current_balance = Number.isFinite(fields.current_balance)
+      ? fields.current_balance
+      : 0;
 
   const { error } = await supabase
     .from("accounts")

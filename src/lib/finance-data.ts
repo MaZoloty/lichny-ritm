@@ -130,6 +130,18 @@ export async function loadFinance(period: Period): Promise<FinanceData> {
   const incomeCat = new Map<string, number>();
   const accMap = new Map<string, AccountStat>();
 
+  for (const a of accounts) {
+    accMap.set(a.id, {
+      accountId: a.id,
+      name: a.name,
+      income: 0,
+      expense: 0,
+      diff: 0,
+      currentBalance: Number(a.current_balance),
+      currency: a.currency,
+    });
+  }
+
   for (const t of transactions) {
     if (t.type === "income") incomeTotal += t.amount;
     else expenseTotal += t.amount;
@@ -158,11 +170,6 @@ export async function loadFinance(period: Period): Promise<FinanceData> {
   }
 
   // Текущие балансы активных счетов в разрезе по счетам.
-  for (const a of accounts) {
-    const stat = accMap.get(a.id);
-    if (stat) stat.currentBalance = Number(a.current_balance);
-  }
-
   const toStats = (m: Map<string, number>, total: number): CategoryStat[] =>
     Array.from(m.entries())
       .map(([name, sum]) => ({

@@ -8,7 +8,7 @@ import { seedDefaultCategories } from "@/lib/categories";
 export interface OnboardingPayload {
   modules: ModuleKey[];
   habits: string[];
-  accounts: string[];
+  accounts: { name: string; start_balance: number }[];
   goal: { name: string; target: number } | null;
   debt: { name: string; current: number; min: number } | null;
   saving: { amount: number } | null;
@@ -52,7 +52,17 @@ export async function completeOnboarding(
   if (payload.modules.includes("finance")) {
     if (payload.accounts.length) {
       await supabase.from("accounts").insert(
-        payload.accounts.map((name) => ({ user_id: uid, name })),
+        payload.accounts.map((account) => {
+          const startBalance = Number(account.start_balance) || 0;
+          return {
+            user_id: uid,
+            name: account.name,
+            start_balance: startBalance,
+            current_balance: startBalance,
+            currency: "RUB",
+            is_active: true,
+          };
+        }),
       );
     }
     await seedDefaultCategories(supabase, uid);
