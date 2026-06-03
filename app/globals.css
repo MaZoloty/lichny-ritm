@@ -9,9 +9,18 @@
 
 html,
 body {
-  background-color: #faf7f2;
+  min-height: 100%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 247, 242, 0) 32%),
+    #faf7f2;
   color: #2f2f35;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.18);
 }
 
 /* Safe-area для iPhone (нижнее меню над домашним индикатором) */
@@ -23,19 +32,39 @@ body {
 }
 
 @layer components {
+  .app-shell {
+    @apply mx-auto min-h-screen max-w-md overflow-x-hidden pb-32;
+  }
   .card {
-    @apply rounded-xl2 bg-card shadow-soft border border-line p-5;
+    @apply rounded-[1.65rem] border border-white/80 bg-white/90 p-5 shadow-soft
+      backdrop-blur;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-2xl bg-accent px-5 py-3
-      font-medium text-white transition active:scale-[0.98] disabled:opacity-50;
+    @apply inline-flex min-h-12 items-center justify-center rounded-[1.35rem]
+      bg-accent px-5 py-3 font-semibold text-white shadow-[0_12px_28px_-16px_rgba(139,92,246,0.85)]
+      transition hover:bg-accent/95 active:scale-[0.98] disabled:opacity-50;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-2xl border border-line
-      bg-card px-5 py-3 font-medium text-ink transition active:scale-[0.98];
+    @apply inline-flex min-h-12 items-center justify-center rounded-[1.35rem]
+      border border-white/80 bg-white/75 px-5 py-3 font-semibold text-ink
+      shadow-[0_10px_24px_-20px_rgba(47,47,53,0.45)] transition
+      hover:bg-white active:scale-[0.98];
   }
   .field {
-    @apply w-full rounded-2xl border border-line bg-card px-4 py-3 text-ink
-      outline-none placeholder:text-muted focus:border-accent;
+    @apply w-full rounded-[1.25rem] border border-white/80 bg-white/75 px-4 py-3
+      text-ink outline-none placeholder:text-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]
+      transition focus:border-accent focus:bg-white focus:ring-4 focus:ring-accent/10;
+  }
+  .soft-tile {
+    @apply rounded-[1.35rem] border border-white/70 bg-bg/75 px-4 py-3;
+  }
+  .metric-card {
+    @apply rounded-[1.5rem] border border-white/80 bg-white/90 p-4 shadow-soft;
+  }
+  .progress-track {
+    @apply h-2.5 w-full overflow-hidden rounded-full bg-line/80;
+  }
+  .progress-fill {
+    @apply h-full rounded-full bg-accent transition-all;
   }
 }

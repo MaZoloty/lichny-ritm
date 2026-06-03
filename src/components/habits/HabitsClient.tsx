@@ -109,12 +109,14 @@ export default function HabitsClient({ data }: { data: WeekData }) {
   }
 
   return (
-    <main className="px-5 pt-safe pb-6">
+    <main className="px-5 pb-8 pt-safe">
       <header className="mb-5 mt-4">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Привычки</h1>
-            <p className="text-muted">{data.weekLabel}</p>
+            <h1 className="text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
+              Привычки
+            </h1>
+            <p className="mt-1 text-sm text-muted">{data.weekLabel}</p>
           </div>
           <button onClick={openAdd} className="btn-ghost px-4 py-2 text-sm">
             + привычка
@@ -133,9 +135,9 @@ export default function HabitsClient({ data }: { data: WeekData }) {
                   <span className="text-muted">Прогресс недели</span>
                   <span className="font-medium">{overall}%</span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-line">
+                <div className="progress-track">
                   <div
-                    className="h-full rounded-full bg-accent transition-all"
+                    className="progress-fill"
                     style={{ width: `${overall}%` }}
                   />
                 </div>
@@ -340,7 +342,7 @@ function DayDots({
           >
             <span className="text-[11px] text-muted">{DAY_LABELS[i]}</span>
             <span
-              className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm transition ${
+              className={`flex h-9 w-9 items-center justify-center rounded-full border bg-white/75 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition ${
                 isFuture ? "opacity-40" : ""
               } ${isToday ? "ring-2 ring-accent ring-offset-1" : ""}`}
               style={

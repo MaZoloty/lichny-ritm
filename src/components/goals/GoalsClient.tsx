@@ -64,10 +64,14 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
   }
 
   return (
-    <main className="px-5 pt-safe pb-6">
+    <main className="px-5 pb-8 pt-safe">
       <header className="mb-4 mt-4">
-        <h1 className="text-2xl font-semibold">Цели</h1>
-        <p className="text-muted">Копим спокойно, маленькими шагами.</p>
+        <h1 className="text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
+          Цели
+        </h1>
+        <p className="mt-1 text-sm leading-6 text-muted">
+          Копим спокойно, маленькими шагами.
+        </p>
       </header>
 
       {data.goals.length === 0 ? (
@@ -135,9 +139,9 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
                     </span>
                     <span className="font-medium">{pct}%</span>
                   </div>
-                  <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-line">
+                  <div className="progress-track mb-2">
                     <div
-                      className="h-full rounded-full bg-accent transition-all"
+                      className="progress-fill"
                       style={{ width: `${Math.min(100, pct)}%` }}
                     />
                   </div>
@@ -221,9 +225,9 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-bg px-4 py-3">
+    <div className="soft-tile">
       <div className="text-xs text-muted">{label}</div>
-      <div className="mt-1 font-semibold">{value}</div>
+      <div className="mt-1 text-lg font-bold">{value}</div>
     </div>
   );
 }

@@ -69,12 +69,43 @@ export default async function HomePage() {
 
   return (
     <main className="px-5 pt-safe">
-      <header className="mb-6 mt-4">
-        <p className="text-muted">
+      <header className="mb-5 mt-4">
+        <p className="text-sm font-medium text-muted">
           <LocalGreeting name={name} />
         </p>
-        <h1 className="text-2xl font-semibold">Твой ритм сегодня</h1>
+        <h1 className="mt-1 text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
+          Твой ритм сегодня
+        </h1>
       </header>
+
+      {!empty && (
+        <section className="mb-5 grid grid-cols-2 gap-2">
+          {enabled.has("finance") && (
+            <>
+              <Link href="/finance" className="soft-tile flex min-h-20 flex-col justify-between">
+                <span className="text-xs font-medium text-muted">Быстро</span>
+                <span className="text-base font-semibold text-ink">+ Доход</span>
+              </Link>
+              <Link href="/finance" className="soft-tile flex min-h-20 flex-col justify-between">
+                <span className="text-xs font-medium text-muted">Быстро</span>
+                <span className="text-base font-semibold text-ink">+ Расход</span>
+              </Link>
+            </>
+          )}
+          {enabled.has("goals") && (
+            <Link href="/goals" className="soft-tile flex min-h-20 flex-col justify-between">
+              <span className="text-xs font-medium text-muted">Цели</span>
+              <span className="text-base font-semibold text-ink">Пополнить цель</span>
+            </Link>
+          )}
+          {enabled.has("habits") && (
+            <Link href="/habits" className="soft-tile flex min-h-20 flex-col justify-between">
+              <span className="text-xs font-medium text-muted">Привычки</span>
+              <span className="text-base font-semibold text-ink">Отметить</span>
+            </Link>
+          )}
+        </section>
+      )}
 
       {empty && (
         <div className="card text-center">
@@ -114,7 +145,7 @@ export default async function HomePage() {
                   {habitSummary.top.map((h) => (
                     <li
                       key={h.name}
-                      className="flex items-center justify-between rounded-2xl bg-bg px-4 py-3"
+                      className="soft-tile flex items-center justify-between"
                     >
                       <span>{h.name}</span>
                       <span className="text-sm text-muted">
@@ -145,22 +176,22 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="mb-4 grid grid-cols-3 gap-2">
-              <div className="rounded-2xl bg-bg px-3 py-3">
+              <div className="soft-tile px-3 py-3">
                 <div className="text-xs text-muted">Расходы</div>
-                <div className="font-medium">
+                <div className="mt-1 font-bold">
                   {money(finance?.expenseTotal ?? 0, finance?.currency)}
                 </div>
               </div>
-              <div className="rounded-2xl bg-bg px-3 py-3">
+              <div className="soft-tile px-3 py-3">
                 <div className="text-xs text-muted">Доходы</div>
-                <div className="font-medium">
+                <div className="mt-1 font-bold">
                   {money(finance?.incomeTotal ?? 0, finance?.currency)}
                 </div>
               </div>
-              <div className="rounded-2xl bg-bg px-3 py-3">
+              <div className="soft-tile px-3 py-3">
                 <div className="text-xs text-muted">Разница</div>
                 <div
-                  className={`font-medium ${
+                  className={`mt-1 font-bold ${
                     (finance?.diff ?? 0) < 0 ? "text-peach" : "text-ink"
                   }`}
                 >
@@ -272,9 +303,9 @@ export default async function HomePage() {
 
 function Progress({ value }: { value: number }) {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-line">
+    <div className="progress-track">
       <div
-        className="h-full rounded-full bg-accent transition-all"
+        className="progress-fill"
         style={{ width: `${value}%` }}
       />
     </div>

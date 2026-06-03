@@ -47,10 +47,12 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
         : "ровно";
 
   return (
-    <main className="px-5 pb-6 pt-safe">
+    <main className="px-5 pb-8 pt-safe">
       <header className="mb-4 mt-4">
-        <h1 className="text-2xl font-semibold">Финансы</h1>
-        <p className="text-muted">
+        <h1 className="text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
+          Финансы
+        </h1>
+        <p className="mt-1 text-sm leading-6 text-muted">
           Деньги любят ясность. Просто зафиксируй факт.
         </p>
       </header>
@@ -61,10 +63,10 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
             key={p.key}
             href={`/finance?period=${p.key}`}
             scroll={false}
-            className={`flex-1 rounded-2xl py-2 text-center text-sm transition ${
+            className={`flex-1 rounded-[1.15rem] py-2 text-center text-sm font-medium transition ${
               data.period === p.key
-                ? "bg-accent text-white"
-                : "bg-card text-muted"
+                ? "bg-accent text-white shadow-[0_12px_28px_-18px_rgba(139,92,246,0.8)]"
+                : "bg-white/70 text-muted"
             }`}
           >
             {p.label}
@@ -73,22 +75,22 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
       </div>
 
       <div className="mb-4 grid grid-cols-3 gap-2">
-        <div className="card p-4">
+        <div className="metric-card bg-green/20">
           <div className="text-xs text-muted">Доходы</div>
-          <div className="mt-1 font-semibold text-ink">
+          <div className="mt-1 text-lg font-bold text-ink">
             {money(data.incomeTotal, data.currency)}
           </div>
         </div>
-        <div className="card p-4">
+        <div className="metric-card bg-peach/20">
           <div className="text-xs text-muted">Расходы</div>
-          <div className="mt-1 font-semibold text-ink">
+          <div className="mt-1 text-lg font-bold text-ink">
             {money(data.expenseTotal, data.currency)}
           </div>
         </div>
-        <div className="card p-4">
+        <div className="metric-card bg-accent/10">
           <div className="text-xs text-muted">Разница</div>
           <div
-            className={`mt-1 font-semibold ${
+            className={`mt-1 text-lg font-bold ${
               data.diff < 0 ? "text-peach" : "text-ink"
             }`}
           >
@@ -155,10 +157,10 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
           <h2 className="mb-3 font-medium">По счетам</h2>
           <ul className="flex flex-col gap-3">
             {data.byAccount.map((a) => (
-              <li key={a.accountId ?? "none"}>
+              <li key={a.accountId ?? "none"} className="soft-tile">
                 <div className="flex justify-between gap-3">
-                  <span>{a.name}</span>
-                  <span className={a.diff < 0 ? "text-peach" : "text-ink"}>
+                  <span className="font-medium">{a.name}</span>
+                  <span className={`font-semibold ${a.diff < 0 ? "text-peach" : "text-ink"}`}>
                     {signedMoney(a.diff, a.currency)}
                   </span>
                 </div>
@@ -187,14 +189,14 @@ export default function FinanceClient({ data }: { data: FinanceData }) {
             </button>
           </div>
         ) : (
-          <ul className="flex flex-col">
+          <ul className="flex flex-col gap-2">
             {data.transactions.map((t) => {
               const signed = t.type === "income" ? t.amount : -t.amount;
               return (
                 <li key={t.id}>
                   <button
                     onClick={() => openEdit(t)}
-                    className="flex w-full items-center justify-between gap-3 border-b border-line py-3 text-left last:border-0"
+                    className="flex w-full items-center justify-between gap-3 rounded-[1.2rem] bg-bg/70 px-3 py-3 text-left transition hover:bg-bg"
                   >
                     <div className="min-w-0">
                       <div className="truncate">

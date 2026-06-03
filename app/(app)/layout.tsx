@@ -17,7 +17,7 @@ export default async function AppLayout({
   );
 
   return (
-    <div className="mx-auto min-h-screen max-w-md pb-28">
+    <div className="app-shell">
       {children}
       <BottomNav enabledModules={navModules} />
     </div>
