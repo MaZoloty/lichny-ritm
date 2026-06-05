@@ -33,7 +33,7 @@ const MODULE_LABEL: Partial<Record<ModuleKey, string>> = {
   goals: "Цели",
   debts: "Долги",
   savings: "Сбережения",
-  reminders: "Напоминания",
+  reminders: "Подсказки",
 };
 
 const MODULE_ICON: Partial<Record<ModuleKey, LucideIcon>> = {

@@ -22,14 +22,14 @@ export default async function RemindersSettingsPage() {
         </Link>
       </div>
       <PageHeader
-        title="Напоминания"
-        subtitle="Спокойные напоминания по финансам, привычкам и платежам."
+        title="Подсказки «Сегодня важно»"
+        subtitle="Подсказки на главной — что заполнить и отметить. Без навязчивых уведомлений."
       />
       <div className="flex flex-col gap-4 px-5">
         {!remindersEnabled && (
           <div className="card">
             <p className="text-sm text-muted">
-              Модуль «Напоминания» сейчас выключен — блок «Сегодня важно» на
+              Модуль «Подсказки» сейчас выключен — блок «Сегодня важно» на
               главной не показывается. Настройки ниже сохранятся и заработают,
               когда включишь модуль в настройках.
             </p>
@@ -45,10 +45,11 @@ export default async function RemindersSettingsPage() {
         <RemindersSettingsClient initial={settings} />
 
         <section className="card">
-          <h2 className="font-medium">Push-уведомления</h2>
+          <h2 className="font-medium">Push-уведомления — позже</h2>
           <p className="mb-3 mt-0.5 text-sm text-muted">
-            Чтобы напоминания приходили, даже когда приложение закрыто. Пока это
-            подготовка — доставка подключится отдельно.
+            Пока не настроены. Сейчас подсказки видны только на главной, когда
+            открываешь приложение. Доставка уведомлений при закрытом приложении
+            подключится отдельно.
           </p>
           <PushManager />
         </section>

@@ -58,19 +58,19 @@ export default function RemindersSettingsClient({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between px-1 text-xs text-muted">
-        <span>Мягкие напоминания внутри приложения.</span>
+        <span>Подсказки на главной в блоке «Сегодня важно».</span>
         <span className={saved ? "text-accent" : "opacity-0"}>Сохранено</span>
       </div>
 
       {/* Финансы */}
       <ReminderCardBox
         title="Финансы"
-        hint="Напоминать заполнить доходы и расходы за день."
+        hint="Показывать подсказку заполнить доходы и расходы за день."
         enabled={s.finance_enabled}
         onToggle={(v) => commit({ ...s, finance_enabled: v })}
         disabled={pending}
       >
-        <FieldLabel>Напомнить вечером</FieldLabel>
+        <FieldLabel>Когда показывать подсказку</FieldLabel>
         <div className="flex flex-wrap gap-2">
           {FINANCE_TIME_OPTIONS.map((t) => (
             <Chip
@@ -87,12 +87,12 @@ export default function RemindersSettingsClient({
       {/* Привычки */}
       <ReminderCardBox
         title="Привычки"
-        hint="Мягко напомнить отметить, что получилось."
+        hint="Показывать подсказку отметить, что получилось."
         enabled={s.habits_enabled}
         onToggle={(v) => commit({ ...s, habits_enabled: v })}
         disabled={pending}
       >
-        <FieldLabel>Напомнить вечером</FieldLabel>
+        <FieldLabel>Когда показывать подсказку</FieldLabel>
         <div className="flex flex-wrap gap-2">
           {HABITS_TIME_OPTIONS.map((t) => (
             <Chip
@@ -109,7 +109,7 @@ export default function RemindersSettingsClient({
       {/* Долги */}
       <ReminderCardBox
         title="Долги"
-        hint="Напоминать о ближайших платежах."
+        hint="Подсказывать о ближайших платежах."
         enabled={s.debts_enabled}
         onToggle={(v) => commit({ ...s, debts_enabled: v })}
         disabled={pending}
@@ -131,7 +131,7 @@ export default function RemindersSettingsClient({
       {/* Цели недели */}
       <ReminderCardBox
         title="Цели недели"
-        hint="В понедельник напомнить поставить цели на неделю."
+        hint="В понедельник подсказывать поставить цели на неделю."
         enabled={s.monday_goals_enabled}
         onToggle={(v) => commit({ ...s, monday_goals_enabled: v })}
         disabled={pending}
@@ -153,7 +153,7 @@ export default function RemindersSettingsClient({
       {/* Сбережения / цели */}
       <ReminderCardBox
         title="Сбережения и цели"
-        hint="Мягкое напоминание раз в месяц пополнить подушку или цель."
+        hint="Раз в месяц подсказывать пополнить подушку или цель."
         enabled={s.savings_enabled}
         onToggle={(v) => commit({ ...s, savings_enabled: v })}
         disabled={pending}
@@ -195,8 +195,9 @@ export default function RemindersSettingsClient({
       )}
 
       <p className="px-1 text-xs text-muted">
-        Пока напоминания показываются внутри приложения на главной в блоке
-        «Сегодня важно». Push-уведомления можно подключить ниже.
+        Подсказки показываются на главной в блоке «Сегодня важно», когда
+        открываешь приложение. Push-уведомления (когда приложение закрыто) пока
+        не настроены — это позже.
       </p>
     </div>
   );

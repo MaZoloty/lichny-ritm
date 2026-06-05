@@ -58,9 +58,9 @@ export const MODULES: ModuleInfo[] = [
   },
   {
     key: "reminders",
-    title: "Напоминания",
+    title: "Подсказки на главной",
     description:
-      "Мягкие вечерние напоминания заполнить финансы и отметить привычки.",
+      "Блок «Сегодня важно» на главной: что заполнить и отметить. Push-уведомления — позже.",
     inNav: false,
     href: "/settings/reminders",
   },

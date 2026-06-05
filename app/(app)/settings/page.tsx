@@ -123,8 +123,8 @@ export default async function SettingsPage() {
         </Section>
 
         <Section
-          title="Напоминания"
-          hint="Вечерние напоминания по финансам, привычкам и платежам."
+          title="Подсказки «Сегодня важно»"
+          hint="Подсказки на главной — что заполнить и отметить. Push-уведомления пока не настроены."
         >
           <Link href="/settings/reminders" className="btn-ghost w-full text-center">
             Настроить
