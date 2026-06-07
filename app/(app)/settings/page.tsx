@@ -37,7 +37,7 @@ export default async function SettingsPage() {
   return (
     <main className="px-5 pb-56 pt-safe">
       <header className="relative -mx-5 overflow-hidden px-5 pb-5 pt-4">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(155,99,244,0.34),transparent_30%),radial-gradient(circle_at_18%_80%,rgba(116,201,132,0.22),transparent_34%),linear-gradient(180deg,rgba(255,253,251,0.92),rgba(250,247,242,0))]" />
+        <div className="page-ambient-glow" />
         <div className="relative z-10">
           <p className="text-sm font-medium text-[#7C7A88]">Приложение под тебя</p>
           <h1 className="mt-1 text-[34px] font-semibold leading-[1.04] text-[#2F2F35]">

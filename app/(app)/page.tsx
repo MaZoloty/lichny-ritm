@@ -92,7 +92,7 @@ export default async function HomePage() {
   return (
     <main className="px-5 pb-56 pt-safe">
       <section className="relative -mx-5 overflow-hidden px-5 pb-0 pt-4">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_37%,rgba(194,166,255,0.44),transparent_30%),linear-gradient(180deg,rgba(255,253,251,0.86),rgba(250,247,242,0))]" />
+        <div className="page-ambient-glow" />
 
         <div className="relative z-10 flex items-start justify-between gap-4 pt-1">
           <div className="min-w-0">

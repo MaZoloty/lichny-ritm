@@ -11,7 +11,9 @@ html,
 body {
   min-height: 100%;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 247, 242, 0) 32%),
+    radial-gradient(120% 44% at 112% 4%, rgba(139, 92, 246, 0.09), transparent 58%),
+    radial-gradient(105% 38% at -18% 18%, rgba(167, 216, 160, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(250, 247, 242, 0) 42%),
     #faf7f2;
   color: #2f2f35;
   font-family: var(--font-sans);
@@ -45,17 +47,33 @@ body {
 @layer components {
   /* ---------- App shell: мобильный контейнер ---------- */
   .app-shell {
-    @apply mx-auto min-h-screen max-w-md overflow-x-hidden pb-32;
+    @apply mx-auto min-h-screen max-w-md overflow-x-hidden pb-28;
+    background:
+      radial-gradient(110% 34% at 108% 2%, rgba(139, 92, 246, 0.1), transparent 62%),
+      radial-gradient(96% 30% at -16% 16%, rgba(167, 216, 160, 0.1), transparent 64%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(250, 247, 242, 0) 38%),
+      #faf7f2;
   }
   @media (min-width: 480px) {
     .app-shell {
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 247, 242, 0) 32%),
+        radial-gradient(110% 34% at 108% 2%, rgba(139, 92, 246, 0.1), transparent 62%),
+        radial-gradient(96% 30% at -16% 16%, rgba(167, 216, 160, 0.1), transparent 64%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(250, 247, 242, 0) 38%),
         #faf7f2;
       box-shadow: 0 30px 90px -45px rgba(47, 47, 53, 0.3);
       border-left: 1px solid rgba(255, 255, 255, 0.7);
       border-right: 1px solid rgba(237, 231, 223, 0.9);
     }
+  }
+
+  .page-ambient-glow {
+    @apply pointer-events-none absolute -top-8 bottom-0 inset-x-[-3rem];
+    background:
+      radial-gradient(26rem 12rem at 88% 14%, rgba(139, 92, 246, 0.2), transparent 64%),
+      radial-gradient(24rem 11rem at 7% 52%, rgba(167, 216, 160, 0.16), transparent 66%),
+      radial-gradient(20rem 10rem at 78% 82%, rgba(242, 155, 143, 0.09), transparent 68%),
+      linear-gradient(180deg, rgba(255, 253, 251, 0.7), rgba(250, 247, 242, 0));
   }
 
   /* ---------- Карточки ---------- */

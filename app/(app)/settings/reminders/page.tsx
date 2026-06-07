@@ -21,7 +21,7 @@ export default async function RemindersSettingsPage() {
         </Link>
       </div>
       <header className="relative -mx-5 overflow-hidden px-5 pb-5 pt-3">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(116,201,132,0.3),transparent_30%),radial-gradient(circle_at_18%_80%,rgba(155,99,244,0.24),transparent_34%),linear-gradient(180deg,rgba(255,253,251,0.92),rgba(250,247,242,0))]" />
+        <div className="page-ambient-glow" />
         <div className="relative z-10">
           <h1 className="text-[30px] font-semibold leading-[1.08] text-[#2F2F35]">
             Сегодня важно

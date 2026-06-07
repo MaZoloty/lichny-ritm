@@ -78,10 +78,10 @@ export default function BottomNav({
   const visiblePrimaryItems = primaryItems.slice(0, 4);
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 bg-gradient-to-t from-bg via-bg/95 to-bg/0 px-3 pb-2 pt-8">
-      <div className="relative mx-auto max-w-md rounded-[1.65rem] border border-white/85 bg-white/90 px-2 pb-safe pt-2 shadow-nav backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-30 bg-gradient-to-t from-bg via-bg/92 to-bg/0 px-4 pb-2 pt-5">
+      <div className="relative mx-auto max-w-md rounded-[1.45rem] border border-white/85 bg-white/90 px-1.5 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_14px_38px_-24px_rgba(47,47,53,0.42)] backdrop-blur">
         {moreOpen && (
-          <div className="absolute inset-x-1 bottom-full mb-3 rounded-[1.6rem] border border-white/85 bg-white/95 p-2 shadow-nav backdrop-blur">
+          <div className="absolute inset-x-1 bottom-full mb-2 rounded-[1.35rem] border border-white/85 bg-white/95 p-1.5 shadow-[0_14px_38px_-24px_rgba(47,47,53,0.42)] backdrop-blur">
             <div className="grid grid-cols-2 gap-2">
               {moreItems.map((item) => {
                 const active = isActive(pathname, item.href);
@@ -91,7 +91,7 @@ export default function BottomNav({
                     key={item.href}
                     href={item.href}
                     onClick={() => setMoreOpen(false)}
-                    className={`flex items-center gap-2 rounded-[1.1rem] px-3 py-2.5 text-sm transition ${
+                    className={`flex items-center gap-2 rounded-[1rem] px-3 py-2 text-sm transition ${
                       active
                         ? "bg-accent-soft font-medium text-accent"
                         : "bg-bg/70 text-muted hover:bg-bg"
@@ -121,13 +121,13 @@ export default function BottomNav({
             <button
               type="button"
               onClick={() => setMoreOpen((open) => !open)}
-              className={`flex h-full w-full flex-col items-center justify-center gap-1 rounded-[1.15rem] px-1 py-1.5 text-[11px] font-medium transition ${
+              className={`flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-[1rem] px-1 py-1 text-[10.5px] font-medium transition ${
                 moreActive || moreOpen
                   ? "bg-accent-soft text-accent"
                   : "text-muted"
               }`}
             >
-              <MoreHorizontal size={22} strokeWidth={1.9} />
+              <MoreHorizontal size={20} strokeWidth={1.9} />
               <span className="truncate">Ещё</span>
             </button>
           </li>
@@ -143,11 +143,11 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   return (
     <Link
       href={item.href}
-      className={`flex h-full flex-col items-center justify-center gap-1 rounded-[1.15rem] px-1 py-1.5 text-[11px] font-medium transition ${
+      className={`flex h-full flex-col items-center justify-center gap-0.5 rounded-[1rem] px-1 py-1 text-[10.5px] font-medium transition ${
         active ? "bg-accent-soft text-accent" : "text-muted"
       }`}
     >
-      <Icon size={22} strokeWidth={1.9} />
+      <Icon size={20} strokeWidth={1.9} />
       <span className="truncate">{item.label}</span>
     </Link>
   );

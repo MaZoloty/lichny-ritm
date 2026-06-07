@@ -112,7 +112,7 @@ export default function HabitsClient({ data }: { data: WeekData }) {
   return (
     <main className="px-5 pb-56 pt-safe">
       <header className="relative -mx-5 overflow-hidden px-5 pb-4 pt-4">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_16%,rgba(116,201,132,0.38),transparent_30%),radial-gradient(circle_at_22%_72%,rgba(155,99,244,0.36),transparent_34%),radial-gradient(circle_at_72%_78%,rgba(240,141,127,0.22),transparent_30%),linear-gradient(180deg,rgba(255,253,251,0.92),rgba(250,247,242,0))]" />
+        <div className="page-ambient-glow" />
 
         <div className="relative z-10 flex items-start justify-between gap-4">
           <div className="min-w-0">
