@@ -373,14 +373,13 @@ function ModuleWidget({
 
       <ModuleIllustration type={illustration} />
 
-      <div className="relative z-20">
-        {children}
-        {progress && (
-          <div className="mt-4">
-            <Progress value={progress.value} tone={progress.tone} />
-          </div>
-        )}
-      </div>
+      <div className="relative z-20">{children}</div>
+
+      {progress && (
+        <div className="absolute bottom-4 left-3 right-3 z-20">
+          <Progress value={progress.value} tone={progress.tone} />
+        </div>
+      )}
     </Link>
   );
 }
