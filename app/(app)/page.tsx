@@ -363,10 +363,6 @@ function ModuleWidget({
             </h3>
           </div>
         </div>
-        <span className={`absolute right-3 top-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${chevronSurface(tone)}`}>
-          <ChevronRight size={14} strokeWidth={2.2} />
-        </span>
-
         <div className="num mt-6 break-words text-[26px] font-semibold leading-none text-[#2F2F35]">
           {metric}
         </div>
@@ -524,13 +520,6 @@ function moduleIconSurface(tone: CardTone) {
   if (tone === "peach") return "bg-[#F08D7F] text-white";
   if (tone === "sky") return "bg-[#70B9EE] text-white";
   return "bg-[#9B63F4] text-white";
-}
-
-function chevronSurface(tone: CardTone) {
-  if (tone === "green") return "bg-[#DFF6E3] text-[#53B868]";
-  if (tone === "peach") return "bg-[#FFE0DA] text-[#DF7469]";
-  if (tone === "sky") return "bg-[#DDF1FF] text-[#55A9E8]";
-  return "bg-[#EEE3FF] text-[#9B63F4]";
 }
 
 function pluralHabits(n: number): string {
