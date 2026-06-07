@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+// Округлый дружелюбный шрифт с полной кириллицей — задаёт мягкий wellness-тон.
 export const metadata: Metadata = {
   title: "Личный ритм",
   description:

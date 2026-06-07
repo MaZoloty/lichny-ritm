@@ -22,6 +22,10 @@ const config: Config = {
         "green-soft": "#E8F4E6",
         peach: "#F29B8F", // warning / расходы (мягкий коралл)
         "peach-soft": "#FCEAE6",
+        sky: "#9CC3E6", // спокойный голубой (сбережения / «вода»)
+        "sky-soft": "#E6F0F9",
+        honey: "#E6C079", // тёплый медовый акцент
+        "honey-soft": "#FBF1DA",
         line: "#EDE7DF", // очень светлая тёплая граница
       },
       borderRadius: {

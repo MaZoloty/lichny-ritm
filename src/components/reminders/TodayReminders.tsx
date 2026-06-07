@@ -24,24 +24,21 @@ const ICONS: Record<ReminderType, LucideIcon> = {
   savings: PiggyBank,
 };
 
-const TONES: Record<
-  ReminderType,
-  { icon: string }
-> = {
+const TONES: Record<ReminderType, { icon: string }> = {
   finance_daily: {
-    icon: "bg-accent text-white",
+    icon: "bg-[#EFEAFE] text-[#8B5CF6]",
   },
   habits_daily: {
-    icon: "bg-green-soft text-ink",
+    icon: "bg-[#E8F4E6] text-[#5E9F6B]",
   },
   debt_payment: {
-    icon: "bg-peach-soft text-ink",
+    icon: "bg-[#FCEAE6] text-[#D77C70]",
   },
   monday_goals: {
-    icon: "bg-accent-soft text-accent",
+    icon: "bg-[#EFEAFE] text-[#8B5CF6]",
   },
   savings: {
-    icon: "bg-accent-soft text-accent",
+    icon: "bg-[#E6F0F9] text-[#608CB4]",
   },
 };
 
@@ -72,51 +69,52 @@ export default function TodayReminders() {
   if (cards === null) return null;
 
   return (
-    <section className="mb-7">
-      <div className="mb-3 px-1">
-        <h2 className="h2">Сегодня важно</h2>
-      </div>
+    <section className="space-y-3">
+      <h2 className="px-1 text-lg font-semibold text-[#2F2F35]">
+        Сегодня важно
+      </h2>
 
       {cards.length === 0 ? (
-        <div className="rounded-[1.45rem] border border-line bg-white/80 p-3.5 shadow-soft">
+        <div className="rounded-[28px] border border-[#EDE7DF] bg-white/90 p-4 shadow-card">
           <div className="flex items-center gap-3">
-            <span className="relative h-9 w-11 shrink-0 overflow-hidden rounded-2xl bg-[linear-gradient(145deg,#FFFFFF,#EFEAFE)]">
-              <span className="absolute left-2 top-2 h-1.5 w-6 rounded-full bg-accent/18" />
-              <span className="absolute left-3 top-4 h-1.5 w-5 rounded-full bg-green/20" />
-              <span className="absolute bottom-2 left-2 h-1.5 w-7 rounded-full bg-peach/18" />
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[18px] bg-[#EFEAFE] text-[#8B5CF6]">
+              <Bell size={19} strokeWidth={1.9} />
             </span>
-            <div>
-              <div className="font-semibold leading-snug text-ink">
+            <div className="min-w-0">
+              <div className="font-semibold leading-snug text-[#2F2F35]">
                 На сегодня всё спокойно
               </div>
-              <div className="mt-0.5 text-sm leading-6 text-muted">
+              <div className="mt-1 text-sm leading-5 text-[#7C7A88]">
                 Можно двигаться в своём ритме.
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <ul className="overflow-hidden rounded-[1.45rem] border border-line bg-white/85 shadow-soft">
+        <ul className="overflow-hidden rounded-[28px] border border-[#EDE7DF] bg-white/90 p-2 shadow-card">
           {cards.map((card) => {
             const Icon = ICONS[card.type] ?? Bell;
             const tone = TONES[card.type] ?? TONES.finance_daily;
             return (
-              <li key={card.key} className="border-b border-line/70 last:border-b-0">
-                <Link href={card.href} className="flex items-center gap-3 p-3">
+              <li key={card.key} className="border-b border-[#EDE7DF]/80 last:border-b-0">
+                <Link
+                  href={card.href}
+                  className="flex items-center gap-3 rounded-[20px] px-2 py-2.5 transition active:scale-[0.99]"
+                >
                   <span
-                    className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${tone.icon}`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${tone.icon}`}
                   >
                     <Icon size={18} strokeWidth={1.9} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-semibold leading-snug text-ink">
+                    <div className="truncate font-semibold leading-snug text-[#2F2F35]">
                       {card.title}
                     </div>
-                    <div className="mt-0.5 truncate text-sm text-muted">
+                    <div className="mt-0.5 truncate text-sm text-[#7C7A88]">
                       {card.text}
                     </div>
                   </div>
-                  <ChevronRight size={17} className="shrink-0 text-faint" />
+                  <ChevronRight size={17} className="shrink-0 text-[#A8A6B2]" />
                 </Link>
               </li>
             );
