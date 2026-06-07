@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
-  ArrowDownLeft,
-  ArrowUpRight,
   CalendarCheck,
-  CheckCircle2,
   ChevronRight,
   Landmark,
   PiggyBank,
@@ -95,7 +92,7 @@ export default async function HomePage() {
   return (
     <main className="px-5 pb-56 pt-safe">
       <section className="relative -mx-5 overflow-hidden px-5 pb-0 pt-4">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_37%,rgba(216,199,255,0.34),transparent_28%),linear-gradient(180deg,rgba(255,253,251,0.8),rgba(250,247,242,0))]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_37%,rgba(194,166,255,0.44),transparent_30%),linear-gradient(180deg,rgba(255,253,251,0.86),rgba(250,247,242,0))]" />
 
         <div className="relative z-10 flex items-start justify-between gap-4 pt-1">
           <div className="min-w-0">
@@ -128,7 +125,7 @@ export default async function HomePage() {
               Маленькие действия складываются в спокойную систему.
             </p>
           </div>
-          <PlantSceneIllustration className="pointer-events-none absolute right-[-2rem] top-[30px] z-0 w-[230px] origin-top-right scale-[0.66] opacity-55 min-[410px]:right-[-0.5rem]" />
+          <PlantSceneIllustration className="pointer-events-none absolute right-[-2rem] top-[30px] z-0 w-[230px] origin-top-right scale-[0.66] opacity-70 min-[410px]:right-[-0.5rem]" />
         </div>
       </section>
 
@@ -144,49 +141,6 @@ export default async function HomePage() {
         <div className="mt-6">
           <TodayReminders />
         </div>
-      )}
-
-      {!empty && (
-        <section className="mt-7 space-y-3">
-          <h2 className="px-1 text-[20px] font-semibold text-[#2F2F35]">
-            Действия
-          </h2>
-
-          <div className="flex flex-nowrap gap-2">
-            {enabled.has("finance") && (
-              <>
-                <QuickAction
-                  href="/finance"
-                  icon={ArrowDownLeft}
-                  label="Доход"
-                  tone="green"
-                />
-                <QuickAction
-                  href="/finance"
-                  icon={ArrowUpRight}
-                  label="Расход"
-                  tone="peach"
-                />
-              </>
-            )}
-            {enabled.has("habits") && (
-              <QuickAction
-                href="/habits"
-                icon={CheckCircle2}
-                label="Отметить"
-                tone="violet"
-              />
-            )}
-            {enabled.has("goals") && (
-              <QuickAction
-                href="/goals"
-                icon={Target}
-                label="Пополнить"
-                tone="milk"
-              />
-            )}
-          </div>
-        </section>
       )}
 
       {empty && (
@@ -370,34 +324,6 @@ function RhythmCard({
   );
 }
 
-function QuickAction({
-  href,
-  icon: Icon,
-  label,
-  tone,
-}: {
-  href: string;
-  icon: LucideIcon;
-  label: string;
-  tone: CardTone;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`flex h-[58px] min-w-0 flex-1 items-center justify-center gap-px rounded-[20px] border px-0.5 py-2 text-center shadow-soft transition active:scale-[0.98] min-[410px]:gap-0.5 ${toneSurface(tone)}`}
-    >
-      <span
-        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/74 min-[410px]:h-7 min-[410px]:w-7 ${iconText(tone)}`}
-      >
-        <Icon size={13} strokeWidth={2.05} className="min-[410px]:h-[15px] min-[410px]:w-[15px]" />
-      </span>
-      <span className="min-w-0 whitespace-nowrap text-[9.5px] font-semibold leading-none text-[#2F2F35] min-[380px]:text-[10px] min-[430px]:text-[11px]">
-        {label}
-      </span>
-    </Link>
-  );
-}
-
 function ModuleWidget({
   href,
   icon: Icon,
@@ -470,30 +396,30 @@ function ModuleIllustration({
 }) {
   if (type === "finance") {
     return (
-      <BankCardIllustration className="pointer-events-none absolute right-2 top-[86px] z-0 w-[64px] opacity-42" />
+      <BankCardIllustration className="pointer-events-none absolute right-2 top-[86px] z-0 w-[64px] opacity-58" />
     );
   }
 
   if (type === "habits") {
     return (
-      <HabitProgressIllustration className="pointer-events-none absolute bottom-7 right-2 z-0 w-[68px] opacity-48" />
+      <HabitProgressIllustration className="pointer-events-none absolute bottom-7 right-2 z-0 w-[68px] opacity-62" />
     );
   }
 
   if (type === "goals") {
     return (
-      <GoalMountainIllustration className="pointer-events-none absolute bottom-8 right-2 z-0 w-[72px] opacity-44" />
+      <GoalMountainIllustration className="pointer-events-none absolute bottom-8 right-2 z-0 w-[72px] opacity-60" />
     );
   }
 
   if (type === "debts") {
     return (
-      <DebtPaymentIllustration className="pointer-events-none absolute bottom-10 right-3 z-0 w-[58px] opacity-42" />
+      <DebtPaymentIllustration className="pointer-events-none absolute bottom-10 right-3 z-0 w-[58px] opacity-58" />
     );
   }
 
   return (
-    <SavingsJarIllustration className="pointer-events-none absolute bottom-7 right-2 z-0 w-[66px] opacity-48" />
+    <SavingsJarIllustration className="pointer-events-none absolute bottom-7 right-2 z-0 w-[66px] opacity-62" />
   );
 }
 
@@ -508,9 +434,9 @@ function MiniStat({
 }) {
   const color =
     tone === "green"
-      ? "text-[#5E9F6B]"
+      ? "text-[#3F9E5A]"
       : tone === "peach"
-        ? "text-[#F08C82]"
+        ? "text-[#EF6F63]"
         : "text-[#2F2F35]";
   return (
     <div className="min-w-0 rounded-[14px] bg-white/68 px-1 py-2 shadow-[0_10px_25px_-20px_rgba(47,47,53,0.55)]">
@@ -568,7 +494,7 @@ function RingProgress({
         cy={size / 2}
         r={r}
         fill="none"
-        stroke="#E8F4E6"
+        stroke="#DDF3DD"
         strokeWidth={stroke}
       />
       <circle
@@ -576,7 +502,7 @@ function RingProgress({
         cy={size / 2}
         r={r}
         fill="none"
-        stroke="#A7D8A0"
+        stroke="#74C984"
         strokeWidth={stroke}
         strokeLinecap="round"
         strokeDasharray={circumference}
@@ -586,40 +512,25 @@ function RingProgress({
   );
 }
 
-function toneSurface(tone: CardTone) {
-  if (tone === "green") return "border-[#DDEED9] bg-[#F0FAF0]";
-  if (tone === "peach") return "border-[#F6D9D4] bg-[#FFF1EE]";
-  if (tone === "milk") return "border-[#E5DBFB] bg-[#F8F4FF]";
-  if (tone === "sky") return "border-[#D8E8F6] bg-[#F0F7FC]";
-  return "border-[#E6DDFC] bg-[#F6F2FF]";
-}
-
 function widgetSurface(tone: CardTone) {
-  if (tone === "green") return "border-[#CBEBCF] bg-[linear-gradient(145deg,#F8FFF8_0%,#EDFAEF_100%)]";
-  if (tone === "peach") return "border-[#F3D7D0] bg-[linear-gradient(145deg,#FFFDFC_0%,#FFF0EC_100%)]";
-  if (tone === "sky") return "border-[#CBE6F8] bg-[linear-gradient(145deg,#FBFEFF_0%,#EBF7FF_100%)]";
-  return "border-[#E1D2FF] bg-[linear-gradient(145deg,#FFFDFB_0%,#F6F0FF_100%)]";
+  if (tone === "green") return "border-[#B9E9C1] bg-[linear-gradient(145deg,#FBFFFB_0%,#E7F9EA_100%)]";
+  if (tone === "peach") return "border-[#F1C2B8] bg-[linear-gradient(145deg,#FFFDFC_0%,#FFE9E3_100%)]";
+  if (tone === "sky") return "border-[#B8DDF8] bg-[linear-gradient(145deg,#FBFEFF_0%,#E2F3FF_100%)]";
+  return "border-[#D4BEFF] bg-[linear-gradient(145deg,#FFFDFB_0%,#F1E8FF_100%)]";
 }
 
 function moduleIconSurface(tone: CardTone) {
-  if (tone === "green") return "bg-[#9EDDA5] text-white";
-  if (tone === "peach") return "bg-[#F4B1A7] text-white";
-  if (tone === "sky") return "bg-[#9CCFF4] text-white";
-  return "bg-[#B988F5] text-white";
+  if (tone === "green") return "bg-[#74C984] text-white";
+  if (tone === "peach") return "bg-[#F08D7F] text-white";
+  if (tone === "sky") return "bg-[#70B9EE] text-white";
+  return "bg-[#9B63F4] text-white";
 }
 
 function chevronSurface(tone: CardTone) {
-  if (tone === "green") return "bg-[#E8F8E9] text-[#77BF7F]";
-  if (tone === "peach") return "bg-[#FFE8E3] text-[#D77C70]";
-  if (tone === "sky") return "bg-[#E4F3FF] text-[#73B8EA]";
-  return "bg-[#F3EAFE] text-[#B988F5]";
-}
-
-function iconText(tone: CardTone) {
-  if (tone === "green") return "text-[#6FB879]";
-  if (tone === "peach") return "text-[#D77C70]";
-  if (tone === "sky") return "text-[#608CB4]";
-  return "text-[#8B5CF6]";
+  if (tone === "green") return "bg-[#DFF6E3] text-[#53B868]";
+  if (tone === "peach") return "bg-[#FFE0DA] text-[#DF7469]";
+  if (tone === "sky") return "bg-[#DDF1FF] text-[#55A9E8]";
+  return "bg-[#EEE3FF] text-[#9B63F4]";
 }
 
 function pluralHabits(n: number): string {
