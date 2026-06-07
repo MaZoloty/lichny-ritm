@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Target, WalletCards } from "lucide-react";
 import { money } from "@/lib/format";
 import { parseISODate } from "@/lib/week";
 import {
@@ -19,10 +20,10 @@ import ContributionModal from "./ContributionModal";
 import HistoryModal from "./HistoryModal";
 
 const STATUS_STYLE: Record<GoalStatus, string> = {
-  start: "bg-line text-muted",
-  moving: "bg-peach/20 text-ink",
-  half: "bg-accent/15 text-accent",
-  done: "bg-green/30 text-ink",
+  start: "bg-[#F2ECE4] text-[#7C7A88]",
+  moving: "bg-[#FFE0DA] text-[#D96E61]",
+  half: "bg-[#E8DAFF] text-[#7C3AED]",
+  done: "bg-[#D2F4D8] text-[#2F9E52]",
 };
 
 function deadlineLabel(iso: string): string {
@@ -64,18 +65,34 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
   }
 
   return (
-    <main className="px-5 pb-8 pt-safe">
-      <header className="mb-4 mt-4">
-        <h1 className="text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
-          Цели
-        </h1>
-        <p className="mt-1 text-sm leading-6 text-muted">
-          Копим спокойно, маленькими шагами.
-        </p>
+    <main className="px-5 pb-56 pt-safe">
+      <header className="relative -mx-5 overflow-hidden px-5 pb-5 pt-4">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(155,99,244,0.38),transparent_30%),radial-gradient(circle_at_18%_80%,rgba(116,201,132,0.22),transparent_34%),linear-gradient(180deg,rgba(255,253,251,0.92),rgba(250,247,242,0))]" />
+        <div className="relative z-10 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-[#7C7A88]">Цели и накопления</p>
+            <h1 className="mt-1 text-[34px] font-semibold leading-[1.04] text-[#2F2F35]">
+              Цели
+            </h1>
+            <p className="mt-3 max-w-[17rem] text-[15px] leading-6 text-[#6F6D79]">
+              Копим спокойно, маленькими шагами.
+            </p>
+          </div>
+          <button
+            onClick={openAddGoal}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#D9C6FF] bg-[#F1E8FF] text-[#7C3AED] shadow-soft transition active:scale-95"
+            aria-label="Добавить цель"
+          >
+            <Plus size={22} strokeWidth={2} />
+          </button>
+        </div>
       </header>
 
       {data.goals.length === 0 ? (
-        <div className="card text-center text-muted">
+        <div className="rounded-[30px] border border-[#D9C6FF] bg-[linear-gradient(145deg,#FFFFFF_0%,#F1E8FF_100%)] p-5 text-center text-[#7C7A88] shadow-card">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[22px] bg-[#E8DAFF] text-[#7C3AED]">
+            <Target size={24} strokeWidth={1.9} />
+          </div>
           <p className="mb-4">
             Добавим первую цель — отпуск, подушку или любую сумму, которую
             хочется собрать спокойно.
@@ -87,7 +104,7 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
       ) : (
         <>
           {/* Сводка */}
-          <section className="card mb-4">
+          <section className="mb-4 rounded-[28px] border border-[#D4BEFF] bg-[linear-gradient(145deg,#FFFFFF_0%,#EFE4FF_62%,#EAF8ED_100%)] p-4 shadow-card">
             <div className="grid grid-cols-2 gap-3">
               <Stat label="Всего накоплено" value={money(data.totalSaved, data.currency)} />
               <Stat
@@ -102,7 +119,7 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
             </div>
           </section>
 
-          <button onClick={openAddGoal} className="btn-ghost mb-4 w-full">
+          <button onClick={openAddGoal} className="btn-ghost mb-4 w-full rounded-[22px] border-[#D4BEFF] bg-[#F1E8FF] text-[#7C3AED]">
             + Добавить цель
           </button>
 
@@ -117,36 +134,41 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
               const perMonth = monthlyNeeded(remaining, months);
 
               return (
-                <article key={g.id} className="card">
-                  <div className="mb-2 flex items-start justify-between">
+                <article key={g.id} className="rounded-[28px] border border-[#D4BEFF] bg-[linear-gradient(145deg,#FFFFFF_0%,#FAF6FF_60%,#F3FFF5_100%)] p-4 shadow-card">
+                  <div className="mb-3 flex items-start justify-between gap-3">
                     <button
                       onClick={() => openEditGoal(g)}
-                      className="text-left text-lg font-medium"
+                      className="min-w-0 text-left text-[18px] font-semibold leading-snug text-[#2F2F35]"
                     >
-                      {g.name}
+                      <span className="inline-flex items-center gap-2">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#8B5CF6] text-white">
+                          <Target size={17} strokeWidth={1.9} />
+                        </span>
+                        <span className="truncate">{g.name}</span>
+                      </span>
                     </button>
                     <span
-                      className={`rounded-full px-3 py-1 text-xs ${STATUS_STYLE[status]}`}
+                      className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLE[status]}`}
                     >
                       {GOAL_STATUS_LABEL[status]}
                     </span>
                   </div>
 
                   <div className="mb-1 flex justify-between text-sm">
-                    <span className="text-muted">
+                    <span className="text-[#7C7A88]">
                       {money(current, data.currency)} из{" "}
                       {money(target, data.currency)}
                     </span>
-                    <span className="font-medium">{pct}%</span>
+                    <span className="font-semibold text-[#7C3AED]">{pct}%</span>
                   </div>
-                  <div className="progress-track mb-2">
+                  <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-[#EDE7DF]">
                     <div
-                      className="progress-fill"
+                      className="h-full rounded-full bg-[linear-gradient(90deg,#8B5CF6_0%,#74C984_100%)] transition-all"
                       style={{ width: `${Math.min(100, pct)}%` }}
                     />
                   </div>
 
-                  <p className="mb-1 text-sm text-muted">
+                  <p className="mb-1 text-sm leading-5 text-[#7C7A88]">
                     {current > target
                       ? "Цель закрыта с запасом"
                       : remaining > 0
@@ -155,7 +177,7 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
                   </p>
 
                   {g.deadline && (
-                    <p className="mb-3 text-xs text-muted">
+                    <p className="mb-3 text-xs leading-5 text-[#A8A6B2]">
                       Дедлайн: {deadlineLabel(g.deadline)}
                       {remaining > 0 &&
                         (perMonth !== null
@@ -225,9 +247,12 @@ export default function GoalsClient({ data }: { data: GoalsData }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="soft-tile">
-      <div className="text-xs text-muted">{label}</div>
-      <div className="mt-1 text-lg font-bold">{value}</div>
+    <div className="rounded-[20px] bg-white/70 px-3 py-3 shadow-[0_10px_25px_-20px_rgba(47,47,53,0.55)]">
+      <div className="flex items-center gap-2 text-xs text-[#7C7A88]">
+        <WalletCards size={14} strokeWidth={1.8} />
+        {label}
+      </div>
+      <div className="mt-1 text-lg font-semibold text-[#2F2F35]">{value}</div>
     </div>
   );
 }

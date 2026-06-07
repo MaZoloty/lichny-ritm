@@ -57,9 +57,9 @@ export default function RemindersSettingsClient({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between px-1 text-xs text-muted">
+      <div className="flex items-center justify-between px-1 text-xs text-[#7C7A88]">
         <span>Подсказки на главной в блоке «Сегодня важно».</span>
-        <span className={saved ? "text-accent" : "opacity-0"}>Сохранено</span>
+        <span className={saved ? "text-[#8B5CF6]" : "opacity-0"}>Сохранено</span>
       </div>
 
       {/* Финансы */}
@@ -191,10 +191,10 @@ export default function RemindersSettingsClient({
       </ReminderCardBox>
 
       {error && (
-        <p className="rounded-2xl bg-peach/15 px-4 py-3 text-sm">{error}</p>
+        <p className="rounded-[22px] border border-[#F1C2B8] bg-[#FFE9E3] px-4 py-3 text-sm text-[#D96E61]">{error}</p>
       )}
 
-      <p className="px-1 text-xs text-muted">
+      <p className="px-1 text-xs leading-5 text-[#7C7A88]">
         Подсказки показываются на главной в блоке «Сегодня важно», когда
         открываешь приложение. Push-уведомления (когда приложение закрыто) пока
         не настроены — это позже.
@@ -219,16 +219,16 @@ function ReminderCardBox({
   children: React.ReactNode;
 }) {
   return (
-    <section className="card">
+    <section className="rounded-[28px] border border-[#EDE7DF] bg-white/92 p-4 shadow-card">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-medium">{title}</h2>
-          <p className="mt-0.5 text-sm text-muted">{hint}</p>
+          <h2 className="font-semibold text-[#2F2F35]">{title}</h2>
+          <p className="mt-1 text-sm leading-5 text-[#7C7A88]">{hint}</p>
         </div>
         <Toggle on={enabled} onClick={() => onToggle(!enabled)} disabled={disabled} />
       </div>
       {enabled && (
-        <div className="mt-4 border-t border-line pt-4">{children}</div>
+        <div className="mt-4 border-t border-[#EDE7DF] pt-4">{children}</div>
       )}
     </section>
   );
@@ -250,7 +250,7 @@ function Toggle({
       disabled={disabled}
       aria-pressed={on}
       className={`relative ml-3 h-6 w-11 shrink-0 rounded-full transition ${
-        on ? "bg-accent" : "bg-line"
+        on ? "bg-[#8B5CF6]" : "bg-[#EDE7DF]"
       }`}
     >
       <span
@@ -277,8 +277,8 @@ function Chip({
       onClick={onClick}
       className={`rounded-full px-4 py-2 text-sm transition ${
         active
-          ? "bg-accent text-white"
-          : "bg-bg text-muted hover:text-ink"
+          ? "bg-[#8B5CF6] text-white shadow-soft"
+          : "bg-white/75 text-[#7C7A88] hover:text-[#2F2F35]"
       }`}
     >
       {children}
@@ -294,7 +294,7 @@ function FieldLabel({
   className?: string;
 }) {
   return (
-    <div className={`mb-2 text-xs font-medium text-muted ${className}`}>
+    <div className={`mb-2 text-xs font-medium text-[#7C7A88] ${className}`}>
       {children}
     </div>
   );

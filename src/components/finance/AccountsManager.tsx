@@ -37,9 +37,9 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="card">
-        <h2 className="mb-2 font-medium">Новый счёт</h2>
-        <p className="mb-3 text-sm text-muted">
+      <section className="rounded-[28px] border border-[#D4BEFF] bg-[linear-gradient(145deg,#FFFFFF_0%,#F1E8FF_100%)] p-4 shadow-card">
+        <h2 className="mb-2 font-semibold text-[#2F2F35]">Новый счёт</h2>
+        <p className="mb-3 text-sm leading-5 text-[#7C7A88]">
           Стартовый баланс станет текущим балансом счёта. Это не доход и не
           попадёт в аналитику периода.
         </p>
@@ -57,7 +57,7 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
             placeholder="Стартовый баланс"
             className="field"
           />
-          <label className="flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 text-sm">
+          <label className="flex items-center gap-3 rounded-[20px] bg-white/70 px-4 py-3 text-sm text-[#2F2F35]">
             <input
               type="checkbox"
               checked={isSavings}
@@ -67,7 +67,7 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
             <span>Считать этот счёт сбережениями</span>
           </label>
           {error && (
-            <p className="rounded-2xl bg-peach/15 px-4 py-3 text-sm">{error}</p>
+            <p className="rounded-[22px] border border-[#F1C2B8] bg-[#FFE9E3] px-4 py-3 text-sm text-[#D96E61]">{error}</p>
           )}
           <button onClick={create} disabled={pending} className="btn-primary">
             Создать счёт
@@ -76,7 +76,7 @@ export default function AccountsManager({ accounts }: { accounts: Account[] }) {
       </section>
 
       {accounts.length === 0 ? (
-        <div className="card text-center text-muted">
+        <div className="rounded-[28px] border border-[#EDE7DF] bg-white/92 p-4 text-center text-[#7C7A88] shadow-card">
           Счетов пока нет. Добавь карту, наличные или накопления.
         </div>
       ) : (
@@ -134,51 +134,51 @@ function AccountRow({
   }
 
   return (
-    <div className="card">
+    <div className="rounded-[28px] border border-[#EDE7DF] bg-white/92 p-4 shadow-card">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className={account.is_active ? "" : "text-muted"}>
+          <div className={account.is_active ? "font-semibold text-[#2F2F35]" : "text-[#7C7A88]"}>
             {account.name}
             {!account.is_active && " · скрыт"}
           </div>
           {account.is_savings && (
-            <div className="mt-1 inline-flex rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+            <div className="mt-1 inline-flex rounded-full bg-[#DDF1FF] px-3 py-1 text-xs font-medium text-[#55A9E8]">
               Сбережения
             </div>
           )}
-          <div className="text-sm text-muted">
+          <div className="mt-1 text-sm leading-5 text-[#7C7A88]">
             Старт {money(Number(account.start_balance), account.currency)} ·
             Сейчас {money(Number(account.current_balance), account.currency)}
           </div>
         </div>
-        <button onClick={onToggle} className="text-sm text-accent">
+        <button onClick={onToggle} className="text-sm font-semibold text-[#8B5CF6]">
           {open ? "Свернуть" : "Изменить"}
         </button>
       </div>
 
       {open && (
-        <div className="mt-3 flex flex-col gap-2 border-t border-line pt-3">
+        <div className="mt-3 flex flex-col gap-2 border-t border-[#EDE7DF] pt-3">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Название"
             className="field"
           />
-          <label className="text-xs text-muted">Стартовый баланс</label>
+          <label className="text-xs text-[#7C7A88]">Стартовый баланс</label>
           <input
             value={start}
             onChange={(e) => setStart(e.target.value)}
             inputMode="decimal"
             className="field"
           />
-          <label className="text-xs text-muted">Текущий баланс</label>
+          <label className="text-xs text-[#7C7A88]">Текущий баланс</label>
           <input
             value={current}
             onChange={(e) => setCurrent(e.target.value)}
             inputMode="decimal"
             className="field"
           />
-          <label className="flex items-center gap-3 rounded-2xl bg-bg px-4 py-3 text-sm">
+          <label className="flex items-center gap-3 rounded-[20px] bg-white/70 px-4 py-3 text-sm text-[#2F2F35]">
             <input
               type="checkbox"
               checked={isSavings}
@@ -193,7 +193,7 @@ function AccountRow({
           <button
             onClick={toggleActive}
             disabled={pending}
-            className="text-center text-sm text-muted"
+            className="text-center text-sm text-[#7C7A88]"
           >
             {account.is_active ? "Скрыть счёт" : "Вернуть счёт"}
           </button>

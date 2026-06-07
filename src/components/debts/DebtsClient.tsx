@@ -75,21 +75,36 @@ export default function DebtsClient({ data }: { data: DebtsData }) {
     : null;
 
   return (
-    <main className="px-5 pb-8 pt-safe">
-      <header className="mb-4 mt-4">
-        <p className="text-sm font-medium text-muted">Долги и кредиты</p>
-        <h1 className="mt-1 text-[1.85rem] font-bold leading-tight tracking-normal text-ink">
-          Осталось закрыть
-        </h1>
+    <main className="px-5 pb-56 pt-safe">
+      <header className="relative -mx-5 overflow-hidden px-5 pb-5 pt-4">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(240,141,127,0.34),transparent_30%),radial-gradient(circle_at_18%_80%,rgba(155,99,244,0.2),transparent_34%),linear-gradient(180deg,rgba(255,253,251,0.92),rgba(250,247,242,0))]" />
+        <div className="relative z-10 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-[#7C7A88]">Долги и кредиты</p>
+            <h1 className="mt-1 text-[34px] font-semibold leading-[1.04] text-[#2F2F35]">
+              Осталось закрыть
+            </h1>
+            <p className="mt-3 max-w-[17rem] text-[15px] leading-6 text-[#6F6D79]">
+              Видим платежи, проценты и движение без лишней тревоги.
+            </p>
+          </div>
+          <button
+            onClick={openAddDebt}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#F1C2B8] bg-[#FFE9E3] text-[#D96E61] shadow-soft transition active:scale-95"
+            aria-label="Добавить долг"
+          >
+            <Plus size={22} strokeWidth={2} />
+          </button>
+        </div>
       </header>
 
       {data.debts.length === 0 ? (
-        <section className="card text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-accent/10 text-accent">
+        <section className="rounded-[30px] border border-[#F1C2B8] bg-[linear-gradient(145deg,#FFFFFF_0%,#FFE9E3_100%)] p-5 text-center shadow-card">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[22px] bg-[#FFE0DA] text-[#D96E61]">
             <ReceiptText size={26} />
           </div>
-          <h2 className="text-lg font-semibold">Добавим первый долг</h2>
-          <p className="mt-2 text-sm leading-6 text-muted">
+          <h2 className="text-lg font-semibold text-[#2F2F35]">Добавим первый долг</h2>
+          <p className="mt-2 text-sm leading-6 text-[#7C7A88]">
             Так будет видно остаток, платежи, проценты и прогресс закрытия.
           </p>
           <button onClick={openAddDebt} className="btn-primary mt-5 w-full">
@@ -98,7 +113,7 @@ export default function DebtsClient({ data }: { data: DebtsData }) {
         </section>
       ) : (
         <>
-          <section className="card mb-4">
+          <section className="mb-4 rounded-[28px] border border-[#F1C2B8] bg-[linear-gradient(145deg,#FFFFFF_0%,#FFE9E3_58%,#F6F0FF_100%)] p-4 shadow-card">
             <div className="grid grid-cols-2 gap-3">
               <Stat
                 label="Осталось закрыть"
@@ -120,23 +135,23 @@ export default function DebtsClient({ data }: { data: DebtsData }) {
             </div>
             <div className="mt-4">
               <div className="mb-1 flex justify-between text-sm">
-                <span className="text-muted">Прогресс закрытия</span>
-                <span className="font-semibold">
+                <span className="text-[#7C7A88]">Прогресс закрытия</span>
+                <span className="font-semibold text-[#D96E61]">
                   {data.summary.overallPaidPercent}%
                 </span>
               </div>
-              <div className="progress-track">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-[#EDE7DF]">
                 <div
-                  className="progress-fill"
+                  className="h-full rounded-full bg-[linear-gradient(90deg,#F08D7F_0%,#8B5CF6_100%)] transition-all"
                   style={{ width: `${data.summary.overallPaidPercent}%` }}
                 />
               </div>
             </div>
-            <div className="soft-tile mt-4 flex items-center gap-3">
-              <CalendarDays className="shrink-0 text-accent" size={20} />
+            <div className="mt-4 flex items-center gap-3 rounded-[20px] bg-white/70 px-3 py-3 shadow-[0_10px_25px_-20px_rgba(47,47,53,0.55)]">
+              <CalendarDays className="shrink-0 text-[#D96E61]" size={20} />
               <div className="min-w-0">
-                <div className="text-xs text-muted">Ближайший платёж</div>
-                <div className="truncate font-semibold">
+                <div className="text-xs text-[#7C7A88]">Ближайший платёж</div>
+                <div className="truncate font-semibold text-[#2F2F35]">
                   {data.summary.nextPayment
                     ? `${data.summary.nextPayment.name} · ${dateLabel(
                         data.summary.nextPayment.next_payment_date,
@@ -161,21 +176,21 @@ export default function DebtsClient({ data }: { data: DebtsData }) {
           </div>
 
           {error && (
-            <p className="mb-4 rounded-2xl bg-peach/15 px-4 py-3 text-sm">
+            <p className="mb-4 rounded-[22px] border border-[#F1C2B8] bg-[#FFE9E3] px-4 py-3 text-sm text-[#D96E61]">
               {error}
             </p>
           )}
 
           <div className="flex flex-col gap-4">
             {data.debts.map((debt) => (
-              <article key={debt.id} className="card">
+              <article key={debt.id} className="rounded-[28px] border border-[#F1C2B8] bg-[linear-gradient(145deg,#FFFFFF_0%,#FFF4F1_62%,#FAF6FF_100%)] p-4 shadow-card">
                 <div className="mb-3 flex items-start justify-between gap-3">
                   <button
                     onClick={() => openEditDebt(debt)}
                     className="min-w-0 text-left"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F08D7F] text-white">
                         {debt.type === "credit_card" ? (
                           <CreditCard size={20} />
                         ) : (
@@ -183,30 +198,30 @@ export default function DebtsClient({ data }: { data: DebtsData }) {
                         )}
                       </span>
                       <span className="min-w-0">
-                        <span className="block truncate text-lg font-semibold">
+                        <span className="block truncate text-lg font-semibold text-[#2F2F35]">
                           {debt.name}
                         </span>
-                        <span className="text-xs text-muted">
+                        <span className="text-xs text-[#7C7A88]">
                           {TYPE_LABEL[debt.type]}
                         </span>
                       </span>
                     </div>
                   </button>
-                  <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+                  <span className="rounded-full bg-[#FFE0DA] px-3 py-1 text-xs font-medium text-[#D96E61]">
                     {debt.paidPercent}%
                   </span>
                 </div>
 
                 <div className="mb-3">
-                  <div className="text-xs text-muted">Осталось закрыть</div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-xs text-[#7C7A88]">Осталось закрыть</div>
+                  <div className="text-2xl font-semibold text-[#2F2F35]">
                     {money(debt.current_amount, data.currency)}
                   </div>
                 </div>
 
-                <div className="progress-track mb-3">
+                <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-[#EDE7DF]">
                   <div
-                    className="progress-fill"
+                    className="h-full rounded-full bg-[#F08D7F] transition-all"
                     style={{ width: `${debt.paidPercent}%` }}
                   />
                 </div>
@@ -228,7 +243,7 @@ export default function DebtsClient({ data }: { data: DebtsData }) {
                 </div>
 
                 {debt.latestPayment && (
-                  <p className="mt-3 text-xs leading-5 text-muted">
+                  <p className="mt-3 text-xs leading-5 text-[#7C7A88]">
                     Последний платёж: {money(debt.latestPayment.actual_payment, data.currency)}.
                     Тело долга {money(debt.latestPayment.principal_reduction, data.currency)},
                     проценты {money(debt.latestPayment.interest_amount, data.currency)}.
@@ -304,18 +319,18 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className={`soft-tile ${accent ? "bg-accent/10" : ""}`}>
-      <div className="text-xs text-muted">{label}</div>
-      <div className="mt-1 text-lg font-bold">{value}</div>
+    <div className={`rounded-[20px] px-3 py-3 shadow-[0_10px_25px_-20px_rgba(47,47,53,0.55)] ${accent ? "bg-[#FFE0DA]" : "bg-white/70"}`}>
+      <div className="text-xs text-[#7C7A88]">{label}</div>
+      <div className="mt-1 text-lg font-semibold text-[#2F2F35]">{value}</div>
     </div>
   );
 }
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.15rem] bg-bg/70 px-3 py-2">
-      <div className="text-xs text-muted">{label}</div>
-      <div className="mt-0.5 truncate font-semibold">{value}</div>
+    <div className="rounded-[18px] bg-white/70 px-3 py-2">
+      <div className="text-xs text-[#7C7A88]">{label}</div>
+      <div className="mt-0.5 truncate font-semibold text-[#2F2F35]">{value}</div>
     </div>
   );
 }
@@ -337,7 +352,7 @@ function PaymentHistory({
 }) {
   if (debt.payments.length === 0) {
     return (
-      <div className="mt-4 rounded-[1.3rem] bg-bg/70 px-4 py-3 text-sm text-muted">
+      <div className="mt-4 rounded-[22px] bg-white/70 px-4 py-3 text-sm text-[#7C7A88]">
         Платежей пока нет.
       </div>
     );
@@ -346,7 +361,7 @@ function PaymentHistory({
   return (
     <div className="mt-4 flex flex-col gap-2">
       {debt.payments.map((payment) => (
-        <div key={payment.id} className="rounded-[1.3rem] bg-bg/70 px-4 py-3">
+        <div key={payment.id} className="rounded-[22px] bg-white/72 px-4 py-3">
           <div className="mb-2 flex items-start justify-between gap-3">
             <div>
               <div className="font-semibold">

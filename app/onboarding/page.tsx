@@ -127,24 +127,25 @@ export default function OnboardingPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 pb-10 pt-safe">
-      <div className="mb-8 mt-6 flex gap-2">
+    <main className="relative mx-auto flex min-h-screen max-w-md flex-col overflow-hidden px-6 pb-10 pt-safe">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(155,99,244,0.32),transparent_30%),radial-gradient(circle_at_18%_82%,rgba(116,201,132,0.24),transparent_34%),linear-gradient(180deg,#FFFDFB_0%,#FAF7F2_100%)]" />
+      <div className="relative z-10 mb-8 mt-6 flex gap-2">
         {[1, 2, 3, 4].map((s) => (
           <div
             key={s}
             className={`h-1.5 flex-1 rounded-full ${
-              s <= step ? "bg-accent" : "bg-line"
+              s <= step ? "bg-[#8B5CF6]" : "bg-[#EDE7DF]"
             }`}
           />
         ))}
       </div>
 
       {step === 1 && (
-        <div className="flex flex-1 flex-col justify-center">
-          <h1 className="text-2xl font-semibold">
+        <div className="relative z-10 flex flex-1 flex-col justify-center">
+          <h1 className="text-[32px] font-semibold leading-tight text-[#2F2F35]">
             Соберём твою личную систему
           </h1>
-          <p className="mt-3 text-muted">
+          <p className="mt-3 text-[15px] leading-6 text-[#6F6D79]">
             Выбери, что хочешь отслеживать сейчас. Можно начать с минимума и
             добавить остальное позже.
           </p>
@@ -155,9 +156,9 @@ export default function OnboardingPage() {
       )}
 
       {step === 2 && (
-        <div className="flex flex-1 flex-col">
-          <h1 className="text-2xl font-semibold">Что отслеживаем?</h1>
-          <p className="mt-2 text-muted">
+        <div className="relative z-10 flex flex-1 flex-col">
+          <h1 className="text-[30px] font-semibold leading-tight text-[#2F2F35]">Что отслеживаем?</h1>
+          <p className="mt-2 text-[15px] leading-6 text-[#6F6D79]">
             Можно выбрать один или несколько разделов. Остальное добавишь в
             настройках.
           </p>
@@ -168,23 +169,23 @@ export default function OnboardingPage() {
                 <button
                   key={m.key}
                   onClick={() => toggleModule(m.key)}
-                  className={`card text-left transition ${
-                    active ? "border-accent ring-1 ring-accent" : ""
+                  className={`rounded-[28px] border bg-white/92 p-4 text-left shadow-card transition ${
+                    active ? "border-[#8B5CF6] ring-1 ring-[#8B5CF6]" : "border-[#EDE7DF]"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <span
                       className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${
                         active
-                          ? "border-accent bg-accent text-white"
-                          : "border-line"
+                          ? "border-[#8B5CF6] bg-[#8B5CF6] text-white"
+                          : "border-[#EDE7DF] bg-white"
                       }`}
                     >
                       {active ? "✓" : ""}
                     </span>
                     <div>
-                      <div className="font-medium">{m.title}</div>
-                      <div className="text-sm text-muted">{m.description}</div>
+                      <div className="font-semibold text-[#2F2F35]">{m.title}</div>
+                      <div className="text-sm leading-5 text-[#7C7A88]">{m.description}</div>
                     </div>
                   </div>
                 </button>
@@ -195,13 +196,13 @@ export default function OnboardingPage() {
       )}
 
       {step === 3 && (
-        <div className="flex flex-1 flex-col gap-6">
-          <h1 className="text-2xl font-semibold">Немного настроим</h1>
+        <div className="relative z-10 flex flex-1 flex-col gap-6">
+          <h1 className="text-[30px] font-semibold leading-tight text-[#2F2F35]">Немного настроим</h1>
 
           {has("habits") && (
-            <section className="card">
-              <h2 className="font-medium">Стартовые привычки</h2>
-              <p className="mb-3 text-sm text-muted">
+            <section className="rounded-[28px] border border-[#EDE7DF] bg-white/92 p-4 shadow-card">
+              <h2 className="font-semibold text-[#2F2F35]">Стартовые привычки</h2>
+              <p className="mb-3 text-sm leading-5 text-[#7C7A88]">
                 Оставь то, что подходит. Остальные можно убрать.
               </p>
               <div className="flex flex-col gap-2">
@@ -221,11 +222,11 @@ export default function OnboardingPage() {
           )}
 
           {needsAccounts && (
-            <section className="card">
+            <section className="rounded-[28px] border border-[#EDE7DF] bg-white/92 p-4 shadow-card">
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-medium">С какой суммы начинаем?</h2>
-                  <p className="mt-1 text-sm text-muted">
+                  <h2 className="font-semibold text-[#2F2F35]">С какой суммы начинаем?</h2>
+                  <p className="mt-1 text-sm leading-5 text-[#7C7A88]">
                     Укажи, сколько денег сейчас есть на карте, наличными или в
                     накоплениях. Стартовый баланс не считается доходом.
                   </p>
@@ -233,7 +234,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={() => setAccounts([])}
-                  className="shrink-0 text-sm text-muted"
+                  className="shrink-0 text-sm text-[#7C7A88]"
                 >
                   Пропустить
                 </button>
@@ -241,7 +242,7 @@ export default function OnboardingPage() {
 
               <div className="flex flex-col gap-3">
                 {accounts.map((account) => (
-                  <div key={account.id} className="rounded-2xl bg-bg p-3">
+                  <div key={account.id} className="rounded-[22px] bg-white/70 p-3 shadow-[0_10px_25px_-20px_rgba(47,47,53,0.55)]">
                     <div className="mb-2 flex items-center gap-2">
                       <input
                         value={account.name}
@@ -254,7 +255,7 @@ export default function OnboardingPage() {
                       <button
                         type="button"
                         onClick={() => removeAccount(account.id)}
-                        className="px-2 text-sm text-muted"
+                        className="px-2 text-sm text-[#7C7A88]"
                         aria-label="Убрать счёт"
                       >
                         ×
@@ -271,7 +272,7 @@ export default function OnboardingPage() {
                       placeholder="Стартовая сумма"
                       className="field"
                     />
-                    <label className="mt-2 flex items-center gap-3 rounded-2xl bg-white/70 px-4 py-3 text-sm">
+                    <label className="mt-2 flex items-center gap-3 rounded-[20px] bg-white/80 px-4 py-3 text-sm text-[#2F2F35]">
                       <input
                         type="checkbox"
                         checked={account.isSavings}
@@ -299,9 +300,9 @@ export default function OnboardingPage() {
           )}
 
           {has("goals") && (
-            <section className="card">
-              <h2 className="font-medium">Первая цель</h2>
-              <p className="mb-3 text-sm text-muted">Можно пропустить.</p>
+            <section className="rounded-[28px] border border-[#D4BEFF] bg-[linear-gradient(145deg,#FFFFFF_0%,#F1E8FF_100%)] p-4 shadow-card">
+              <h2 className="font-semibold text-[#2F2F35]">Первая цель</h2>
+              <p className="mb-3 text-sm text-[#7C7A88]">Можно пропустить.</p>
               <input
                 value={goalName}
                 onChange={(e) => setGoalName(e.target.value)}
@@ -319,9 +320,9 @@ export default function OnboardingPage() {
           )}
 
           {has("debts") && (
-            <section className="card">
-              <h2 className="font-medium">Первый долг</h2>
-              <p className="mb-3 text-sm text-muted">Можно пропустить.</p>
+            <section className="rounded-[28px] border border-[#F1C2B8] bg-[linear-gradient(145deg,#FFFFFF_0%,#FFE9E3_100%)] p-4 shadow-card">
+              <h2 className="font-semibold text-[#2F2F35]">Первый долг</h2>
+              <p className="mb-3 text-sm text-[#7C7A88]">Можно пропустить.</p>
               <input
                 value={debtName}
                 onChange={(e) => setDebtName(e.target.value)}
@@ -348,14 +349,14 @@ export default function OnboardingPage() {
       )}
 
       {step === 4 && (
-        <div className="flex flex-1 flex-col justify-center text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-green/40 text-2xl">
+        <div className="relative z-10 flex flex-1 flex-col justify-center text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[26px] bg-[#D2F4D8] text-2xl text-[#2F9E52]">
             ✓
           </div>
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-[30px] font-semibold leading-tight text-[#2F2F35]">
             Готово. Начинаем мягко.
           </h1>
-          <p className="mt-3 text-muted">
+          <p className="mt-3 text-[15px] leading-6 text-[#6F6D79]">
             Можно просто отмечать факты и постепенно настраивать систему под
             себя.
           </p>
@@ -363,12 +364,12 @@ export default function OnboardingPage() {
       )}
 
       {error && (
-        <p className="mt-4 rounded-2xl bg-peach/15 px-4 py-3 text-sm text-ink">
+        <p className="relative z-10 mt-4 rounded-[22px] border border-[#F1C2B8] bg-[#FFE9E3] px-4 py-3 text-sm text-[#D96E61]">
           {error}
         </p>
       )}
 
-      <div className="mt-8 flex gap-3 pb-safe">
+      <div className="relative z-10 mt-8 flex gap-3 pb-safe">
         {step > 1 && step < 4 && (
           <button
             onClick={() => setStep(step - 1)}

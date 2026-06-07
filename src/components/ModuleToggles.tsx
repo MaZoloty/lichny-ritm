@@ -32,15 +32,15 @@ export default function ModuleToggles({
             key={m.key}
             onClick={() => toggle(m.key)}
             disabled={pending}
-            className="flex items-center justify-between rounded-2xl bg-bg px-4 py-3 text-left"
+            className="flex items-center justify-between rounded-[22px] bg-white/70 px-4 py-3 text-left shadow-[0_10px_25px_-20px_rgba(47,47,53,0.55)] transition active:scale-[0.99]"
           >
             <span>
-              <span className="block font-medium">{m.title}</span>
-              <span className="block text-xs text-muted">{m.description}</span>
+              <span className="block font-semibold text-[#2F2F35]">{m.title}</span>
+              <span className="block text-xs leading-5 text-[#7C7A88]">{m.description}</span>
             </span>
             <span
               className={`relative ml-3 h-6 w-11 shrink-0 rounded-full transition ${
-                on ? "bg-accent" : "bg-line"
+                on ? "bg-[#8B5CF6]" : "bg-[#EDE7DF]"
               }`}
             >
               <span

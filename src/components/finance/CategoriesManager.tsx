@@ -45,8 +45,8 @@ export default function CategoriesManager({
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex-1 rounded-2xl py-2 text-center text-sm transition ${
-              tab === t ? "bg-accent text-white" : "bg-card text-muted"
+            className={`flex-1 rounded-[20px] py-2.5 text-center text-sm font-semibold transition ${
+              tab === t ? "bg-[#8B5CF6] text-white shadow-soft" : "bg-white/75 text-[#7C7A88]"
             }`}
           >
             {t === "expense" ? "Расходы" : "Доходы"}
@@ -54,8 +54,8 @@ export default function CategoriesManager({
         ))}
       </div>
 
-      <section className="card">
-        <h2 className="mb-3 font-medium">Новая категория</h2>
+      <section className="rounded-[28px] border border-[#EDE7DF] bg-white/92 p-4 shadow-card">
+        <h2 className="mb-3 font-semibold text-[#2F2F35]">Новая категория</h2>
         <div className="flex gap-2">
           <input
             value={name}
@@ -72,14 +72,14 @@ export default function CategoriesManager({
           </button>
         </div>
         {error && (
-          <p className="mt-2 rounded-2xl bg-peach/15 px-4 py-3 text-sm">
+          <p className="mt-2 rounded-[22px] border border-[#F1C2B8] bg-[#FFE9E3] px-4 py-3 text-sm text-[#D96E61]">
             {error}
           </p>
         )}
       </section>
 
       {categories.length === 0 && (
-        <div className="card text-center text-sm text-muted">
+        <div className="rounded-[28px] border border-[#D4BEFF] bg-[linear-gradient(145deg,#FFFFFF_0%,#F1E8FF_100%)] p-4 text-center text-sm text-[#7C7A88] shadow-card">
           <p className="mb-3">Категории помогают понять, куда уходят деньги.</p>
           <button onClick={makeDefaults} disabled={pending} className="btn-primary">
             Создать категории по умолчанию
@@ -126,7 +126,7 @@ function CategoryRow({
   }
 
   return (
-    <div className="card flex items-center justify-between py-3">
+    <div className="flex items-center justify-between rounded-[24px] border border-[#EDE7DF] bg-white/92 px-4 py-3 shadow-card">
       {editing ? (
         <input
           value={name}
@@ -134,25 +134,25 @@ function CategoryRow({
           className="field mr-2"
         />
       ) : (
-        <span className={category.is_active ? "" : "text-muted"}>
+        <span className={category.is_active ? "font-medium text-[#2F2F35]" : "text-[#7C7A88]"}>
           {category.name}
           {!category.is_active && " · скрыта"}
         </span>
       )}
       <div className="flex shrink-0 items-center gap-3">
         {editing ? (
-          <button onClick={save} disabled={pending} className="text-sm text-accent">
+          <button onClick={save} disabled={pending} className="text-sm font-semibold text-[#8B5CF6]">
             Сохранить
           </button>
         ) : (
-          <button onClick={() => setEditing(true)} className="text-sm text-accent">
+          <button onClick={() => setEditing(true)} className="text-sm font-semibold text-[#8B5CF6]">
             Изменить
           </button>
         )}
         <button
           onClick={toggleActive}
           disabled={pending}
-          className="text-sm text-muted"
+          className="text-sm text-[#7C7A88]"
         >
           {category.is_active ? "Скрыть" : "Вернуть"}
         </button>
