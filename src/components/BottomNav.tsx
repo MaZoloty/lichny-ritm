@@ -78,7 +78,7 @@ export default function BottomNav({
   const visiblePrimaryItems = primaryItems.slice(0, 4);
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 bg-gradient-to-t from-bg/95 via-bg/66 to-bg/0 pb-[env(safe-area-inset-bottom)] pt-3">
+    <nav className="fixed inset-x-0 bottom-0 z-30 bg-gradient-to-t from-bg/95 via-bg/66 to-bg/0 pt-3">
       <div className="relative mx-auto w-full max-w-md rounded-t-[1.45rem] border-x border-t border-white/80 bg-white/90 px-1.5 py-1 shadow-[0_-8px_30px_-24px_rgba(47,47,53,0.38)] backdrop-blur">
         {moreOpen && (
           <div className="absolute inset-x-1 bottom-full mb-1.5 rounded-[1.15rem] border border-white/80 bg-white/94 p-1.5 shadow-[0_10px_30px_-22px_rgba(47,47,53,0.38)] backdrop-blur">
