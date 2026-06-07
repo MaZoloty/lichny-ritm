@@ -152,7 +152,7 @@ export default async function HomePage() {
             Действия
           </h2>
 
-          <div className="grid grid-cols-4 gap-2">
+          <div className="flex flex-nowrap gap-2">
             {enabled.has("finance") && (
               <>
                 <QuickAction
@@ -384,14 +384,14 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className={`flex h-[58px] items-center justify-center gap-1.5 rounded-[20px] border px-1.5 py-2 text-center shadow-soft transition active:scale-[0.98] ${toneSurface(tone)}`}
+      className={`flex h-[58px] min-w-0 flex-1 items-center justify-center gap-px rounded-[20px] border px-0.5 py-2 text-center shadow-soft transition active:scale-[0.98] min-[410px]:gap-0.5 ${toneSurface(tone)}`}
     >
       <span
-        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/74 ${iconText(tone)}`}
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/74 min-[410px]:h-7 min-[410px]:w-7 ${iconText(tone)}`}
       >
-        <Icon size={15} strokeWidth={2.05} />
+        <Icon size={13} strokeWidth={2.05} className="min-[410px]:h-[15px] min-[410px]:w-[15px]" />
       </span>
-      <span className="whitespace-nowrap text-[11px] font-semibold leading-none text-[#2F2F35] min-[410px]:text-[12px]">
+      <span className="min-w-0 whitespace-nowrap text-[9.5px] font-semibold leading-none text-[#2F2F35] min-[380px]:text-[10px] min-[430px]:text-[11px]">
         {label}
       </span>
     </Link>
